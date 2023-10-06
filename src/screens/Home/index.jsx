@@ -2,8 +2,6 @@ import { View, StyleSheet, Image, Input, Button, Text, TextInput} from 'react-na
 import React from 'react'
 import {useNavigation } from "@react-navigation/native"
 
-
-
 export default function Home(){
 
   
