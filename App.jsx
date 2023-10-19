@@ -11,9 +11,11 @@ import AppNav from "./src/navigation/AppNav";
 export default function App() {
   return (
     <AuthProvider>
-      <NavigationContainer independent={true}>
-        <AppNav />
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer independent={true}>
+          <AppNav />
+        </NavigationContainer>
+      </Provider>
     </AuthProvider>
   );
 }

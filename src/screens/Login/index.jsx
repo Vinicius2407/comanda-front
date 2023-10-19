@@ -18,6 +18,9 @@ const Login = ({ navigation }) => {
   const [userLogin, setUserLogin] = useState(null);
   const [userPassword, setUserPassword] = useState(null);
 
+  const handleNavHome = () => {
+    navigation.navigate("Home");
+  };
   const handleNavCadastro = () => {
     navigation.navigate("Register");
   };
@@ -63,6 +66,16 @@ const Login = ({ navigation }) => {
       >
         Realizar cadastro
       </Text>
+
+      <Button
+        style={styles.button}
+        title="Home"
+        onPress={() => {
+          handleNavHome();
+        }}
+      >
+        Entrar
+      </Button>
     </View>
   );
 };
