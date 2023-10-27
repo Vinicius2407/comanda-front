@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Register from '../screens/Register'
 import Login from '../screens/Login'
 import Home from '../screens/Home'
-import Cardapio from '../screens/Cardapio'
+import ShoppingCart from '../screens/ShoppingCart'
 
 const Stack = createNativeStackNavigator();
 
@@ -27,8 +27,8 @@ export default function Routes() {
             />
             
             <Stack.Screen
-                name="Cardapio"
-                component={Cardapio}
+                name="ShoppingCart"
+                component={ShoppingCart}
                 options={{headerShown: false}}
             />
 

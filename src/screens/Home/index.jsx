@@ -18,7 +18,7 @@ export default function Home() {
   };
 
   const handleNavCardapio = () => {
-    navigation.navigate("Cardapio");
+    navigation.navigate("ShoppingCart");
   };
 
   return (

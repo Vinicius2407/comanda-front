@@ -8,6 +8,8 @@ import {
   TextInput,
 } from "react-native";
 
+import { user_login } from "../../services/user_api";
+import { AsyncStorage } from "react-native";
 import React, { useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
@@ -16,7 +18,35 @@ const Login = ({ navigation }) => {
   const { login } = useContext(AuthContext);
 
   const [userLogin, setUserLogin] = useState(null);
-  const [userPassword, setUserPassword] = useState(null);
+  const [password, setPassword] = useState(null);
+
+  const checkPasswordValidity = (value) => {
+    const isNonWhiteSpace = /^\S*$/;
+    if (!isNonWhiteSpace.test(value)) {
+      return "Password must not contain whitespaces";
+    }
+  };
+
+  const handleLogin = () => {
+    const checkPassword = checkPasswordValidity(password);
+    if (!checkPassword) {
+      user_login({
+        login: userLogin,
+        senha: password,
+      })
+        .then((result) => {
+          if (result.status == 200) {
+            AsyncStorage.setItem("AccessToken", result.data);
+            navigation.replace("Home");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      alert(checkPassword);
+    }
+  };
 
   const handleNavHome = () => {
     navigation.navigate("Home");
@@ -40,20 +70,14 @@ const Login = ({ navigation }) => {
       <Text style={styles.title}>Senha</Text>
       <TextInput
         onChangeText={(passwordText) => {
-          setUserPassword(passwordText);
+          setPassword(passwordText);
         }}
-        value={userPassword}
+        value={password}
         placeholder="Senha"
         style={styles.input}
       />
 
-      <Button
-        style={styles.button}
-        title="Entrar"
-        onPress={() => {
-          login();
-        }}
-      >
+      <Button style={styles.button} title="Entrar" onPress={handleLogin}>
         Entrar
       </Button>
 

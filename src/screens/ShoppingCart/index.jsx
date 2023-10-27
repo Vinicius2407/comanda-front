@@ -7,18 +7,19 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import CartListItem from "../components/CartListItem";
+import CartListItem from "../../components/CartListItems";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import {
   selectDeliveryPrice,
   selectSubtotal,
   selectTotal,
   cartSlice,
-} from "../store/cartSlice";
+} from "../../store/cartSlice";
 import {
   useCreateOrderMutation,
   useCreatePaymentIntentMutation,
-} from "../store/apiSlice";
+} from "../../store/apiSlice";
 import { useStripe } from "@stripe/stripe-react-native";
 
 const ShoppingCartTotals = () => {

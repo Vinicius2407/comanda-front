@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Register from "../screens/Register";
 import Login from "../screens/Login";
 import Home from "../screens/Home";
-import Cardapio from "../screens/Cardapio";
+import ShoppingCart from "../screens/ShoppingCart";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Stack = createNativeStackNavigator();
@@ -28,8 +28,8 @@ const AppStack = () => {
       />
 
       <Stack.Screen
-        name="Cardapio"
-        component={Cardapio}
+        name="ShoppingCart"
+        component={ShoppingCart}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
