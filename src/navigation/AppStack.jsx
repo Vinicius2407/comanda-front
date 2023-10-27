@@ -5,6 +5,7 @@ import Login from "../screens/Login";
 import Home from "../screens/Home";
 import ShoppingCart from "../screens/ShoppingCart";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Mesas from "../screens/Mesas";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,12 @@ const AppStack = () => {
       <Stack.Screen
         name="ShoppingCart"
         component={ShoppingCart}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="Mesas"
+        component={Mesas}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

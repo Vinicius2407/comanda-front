@@ -21,6 +21,10 @@ export default function Home() {
     navigation.navigate("ShoppingCart");
   };
 
+  const handleNavMesas = () => {
+    navigation.navigate("Mesas");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bem vindo!</Text>
@@ -43,6 +47,16 @@ export default function Home() {
         }}
       >
         Comanda
+      </Button>
+
+      <Button
+        style={styles.button1}
+        title="Mesas"
+        onPress={() => {
+          handleNavMesas();
+        }}
+      >
+        Mesas
       </Button>
     </View>
   );

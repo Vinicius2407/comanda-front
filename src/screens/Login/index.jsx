@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { user_login } from "../../services/user_api";
-import { AsyncStorage } from "react-native";
+import { AsyncStorage } from "@react-native-async-storage/async-storage";
 import React, { useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
