@@ -6,21 +6,29 @@ import {
   Button,
   Text,
   TextInput,
+  ScrollView,
 } from "react-native";
-
 import React, { useState } from "react";
+import { RadioButton } from 'react-native-paper';
 import { useNavigation } from "@react-navigation/native";
+
 import api from "../../services/api";
 
 export default function Register() {
   const navigation = useNavigation();
 
-  const [id, setId] = useState("");
   const [login, setLogin] = useState("");
   const [name, setName] = useState("");
-  const [atribuicao, setAtribuicao] = useState("");
+  const [atribuicao, setAtribuicao] = useState("1");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [senhasIguais, setSenhasIguais] = useState(false);
+
+  const atribuicoesProps = [
+    { label: 'Garçom', value: '1' },
+    { label: 'Cozinha', value: '2' },
+  ];
 
   const handlePost = async () => {
     console.log({
@@ -38,7 +46,7 @@ export default function Register() {
       })
       .then((res) => {
         console.log(res);
-        console.log(res.data);
+        navigation.navigate("Login");
       })
       .catch((error) => console.log(error));
   };
@@ -47,55 +55,78 @@ export default function Register() {
     setShowPassword(!showPassword);
   };
 
+  const verificaSenha = () => {
+    if (confirmPassword === password) {
+      setSenhasIguais(true);
+    } else {
+      setSenhasIguais(false);
+    }
+  }
+
   const handleNavLogin = () => {
     navigation.navigate("Login");
   };
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nome</Text>
+    <ScrollView>
+      <View style={[styles.container, styles.box]}>
+        <Text style={styles.title}>Nome</Text>
 
-      <TextInput
-        onChangeText={setName}
-        value={name}
-        placeholder="Digite seu nome"
-        style={styles.input}
-      />
+        <TextInput
+          onChangeText={setName}
+          value={name}
+          placeholder="Digite seu nome"
+          style={styles.input}
+        />
 
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        value={login}
-        onChangeText={setLogin}
-        placeholder="Digite seu login"
-        style={styles.input}
-      />
+        <Text style={styles.title}>Login</Text>
+        <TextInput
+          value={login}
+          onChangeText={setLogin}
+          placeholder="Digite seu login"
+          style={styles.input}
+        />
 
-      <Text style={styles.title}>Senha</Text>
-      <TextInput
-        secureTextEntry={!showPassword}
-        value={password}
-        placeholder="Senha"
-        onChangeText={setPassword}
-        onPress={toggleShowPassword}
-        style={styles.input}
-      />
+        <Text style={styles.title}>Senha</Text>
+        <TextInput
+          secureTextEntry={!showPassword}
+          value={password}
+          placeholder="Senha"
+          onChangeText={setPassword}
+          onPress={toggleShowPassword}
+          style={styles.input}
+        />
 
-      <Text style={styles.title}>Confirme sua senha</Text>
-      <TextInput placeholder="Confirme sua senha" style={styles.input} />
+        <Text style={styles.title}>Confirme sua senha</Text>
+        <TextInput secureTextEntry={!showPassword} placeholder="Confirme sua senha" value={confirmPassword} onChangeText={(value) => { setConfirmPassword(value), verificaSenha}} style={styles.input} />
 
-      <Text style={styles.title}>Atribuicao</Text>
-      <TextInput
-        value={atribuicao}
-        onChangeText={setAtribuicao}
-        placeholder="[1] garcom - [2] cozinha"
-        style={styles.input}
-      />
+        <Text style={styles.title}>Atribuicao</Text>
+        <View style={styles.inputRadioButton}>
+          <View style={styles.inputRadioButton}>
+            <RadioButton
+              value="1"
+              status={atribuicao === '1' ? 'checked' : 'unchecked'}
+              onPress={() => setAtribuicao('1')}
+            />
+            <Text>Garçom</Text>
+          </View>
+          <View style={styles.inputRadioButton}>
+            <RadioButton
+              value="2"
+              status={atribuicao === '2' ? 'checked' : 'unchecked'}
+              onPress={() => setAtribuicao('2')}
+            />
+            <Text>Cozinha</Text>
+          </View>
+        </View>
 
-      <Button
-        style={styles.button}
-        title="CADASTRAR"
-        onPress={() => handlePost()}
-      ></Button>
-    </View>
+        <Button
+          disabled={!(name && login && password && senhasIguais)}
+          style={styles.button}
+          title="CADASTRAR"
+          onPress={() => handlePost()}
+        ></Button>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -147,5 +178,11 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: "#a1a1a1",
+  },
+  inputRadioButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
   },
 });
