@@ -6,6 +6,8 @@ import Home from "../screens/Home";
 import ShoppingCart from "../screens/ShoppingCart";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Mesas from "../screens/Mesas";
+import Lista from "../screens/Lista";
+import UpdateScreen from "../screens/UpdateScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +39,18 @@ const AppStack = () => {
       <Stack.Screen
         name="Mesas"
         component={Mesas}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="Lista"
+        component={Lista}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="UpdateScreen"
+        component={UpdateScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

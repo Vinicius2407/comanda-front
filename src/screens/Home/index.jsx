@@ -25,6 +25,10 @@ export default function Home() {
     navigation.navigate("Mesas");
   };
 
+  const handleNavLista = () => {
+    navigation.navigate("Lista");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bem vindo!</Text>
@@ -57,6 +61,16 @@ export default function Home() {
         }}
       >
         Mesas
+      </Button>
+
+      <Button
+        style={styles.button1}
+        title="Lista"
+        onPress={() => {
+          handleNavLista();
+        }}
+      >
+        Lista
       </Button>
     </View>
   );

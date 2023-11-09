@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,64 +9,53 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
 import { RadioButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-
 import api from "../../services/api";
+import updateUser from "../../components/updateUser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Register() {
+export default function UpdateScreen() {
   const navigation = useNavigation();
 
-  const [login, setLogin] = useState("");
   const [name, setName] = useState("");
-  const [atribuicao, setAtribuicao] = useState("1");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [atribuicao, setAtribuicao] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [senhasIguais, setSenhasIguais] = useState(false);
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   const atribuicoesProps = [
     { label: "Garçom", value: "1" },
     { label: "Cozinha", value: "2" },
   ];
 
-  const handlePost = async () => {
-    console.log({
-      nome: name,
-      login: login,
-      senha: password,
-      atribuicao: atribuicao,
-    });
+  const [id, setID] = useState(null);
+
+  useEffect(() => {
+    setID(AsyncStorage.getItem("id"));
+    setName(AsyncStorage.getItem("name"));
+    setLogin(AsyncStorage.getItem("login"));
+    setPassword(AsyncStorage.getItem("senha"));
+    setAtribuicao(AsyncStorage.getItem("atribuicao"));
+  }, []);
+
+  const handleUpdate = async () => {
     await api
-      .post("/auth/register", {
+      .put("/usuarios/${id}", {
         nome: name,
         login: login,
-        senha: password,
         atribuicao: atribuicao,
       })
       .then((res) => {
         console.log(res);
-        navigation.navigate("Login");
+        navigation.navigate("Lista");
       })
       .catch((error) => console.log(error));
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const verificaSenha = () => {
-    if (confirmPassword === password) {
-      setSenhasIguais(true);
-    } else {
-      setSenhasIguais(false);
-    }
-  };
-
-  const handleNavLogin = () => {
-    navigation.navigate("Login");
-  };
   return (
     <ScrollView>
       <View style={[styles.container, styles.box]}>
@@ -86,24 +76,13 @@ export default function Register() {
           style={styles.input}
         />
 
-        <Text style={styles.title}>Senha</Text>
+        <Text style={styles.title}>Nova Senha</Text>
         <TextInput
           secureTextEntry={!showPassword}
           value={password}
           placeholder="Senha"
           onChangeText={setPassword}
           onPress={toggleShowPassword}
-          style={styles.input}
-        />
-
-        <Text style={styles.title}>Confirme sua senha</Text>
-        <TextInput
-          secureTextEntry={!showPassword}
-          placeholder="Confirme sua senha"
-          value={confirmPassword}
-          onChangeText={(value) => {
-            setConfirmPassword(value), verificaSenha;
-          }}
           style={styles.input}
         />
 
@@ -125,19 +104,18 @@ export default function Register() {
             />
             <Text>Cozinha</Text>
           </View>
-        </View>
 
-        <Button
-          disabled={!(name && login && password)}
-          style={styles.button}
-          title="CADASTRAR"
-          onPress={() => handlePost()}
-        ></Button>
+          <Button
+            disabled={!(name && login && password)}
+            style={styles.button}
+            title="Atualizar"
+            onPress={() => handleUpdate()}
+          ></Button>
+        </View>
       </View>
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,10 +1,14 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
+const Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb21hbmRhZ28iLCJzdWIiOiJhYWEiLCJleHAiOjE2OTk1MjQxOTd9.akr2L5sNzuaW4_E4IUtydVH5Mqk8CevtFvsZXU_MaBc'
 const api = axios.create({
+
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Token}`
     },
-    baseURL: "https://60a1-2001-1284-f033-a5bc-5555-3ae2-7c9d-f714.ngrok-free.app",
+    baseURL: "http://10.0.2.2:8080",
 });
 
 export default api;
