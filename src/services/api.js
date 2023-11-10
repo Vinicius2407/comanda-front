@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb21hbmRhZ28iLCJzdWIiOiJhYWEiLCJleHAiOjE2OTk1MjQxOTd9.akr2L5sNzuaW4_E4IUtydVH5Mqk8CevtFvsZXU_MaBc'
+const Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb21hbmRhZ28iLCJzdWIiOiJqamoiLCJleHAiOjE2OTk2Njc3NDV9.bRrzfLF5rf5xQFkhT11RQBUMgQO9tyHBsUTEMLCOug0'
 const api = axios.create({
 
     headers: {

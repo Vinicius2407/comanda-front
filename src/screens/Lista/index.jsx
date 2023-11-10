@@ -14,6 +14,7 @@ import { Card } from "react-native-paper";
 import getUser from "../../components/getUser";
 import Loading from "../../components/Loading";
 import UpdateScreen from "../UpdateScreen";
+import api from "../../services/api";
 
 const Lista = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -28,6 +29,15 @@ const Lista = ({ navigation }) => {
     console.log(data);
   }, [data]);
 
+  const excluirUsuario = async (id) => {
+    await api
+      .delete(`/usuarios/${id}`, {})
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
     <>
       <Text style={styles.title}>Lista de usuarios</Text>
@@ -36,12 +46,15 @@ const Lista = ({ navigation }) => {
       {!loading && data?.length
         ? data.map((data, i) => (
             <Card style={{ marginBottom: 5, width: "85%" }} key={i}>
+              <Text>{data.id}</Text>
               <Text>{data.nome}</Text>
               <Text>{data.atribuicao}</Text>
               <Button
                 title="Update"
                 onPress={() => navigation.navigate(UpdateScreen, setData(data))}
               />
+
+              <Button title="Excluir" onPress={() => excluirUsuario(data.id)} />
             </Card>
           ))
         : null}

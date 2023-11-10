@@ -12,7 +12,6 @@ import {
 import { RadioButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../services/api";
-import updateUser from "../../components/updateUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function UpdateScreen() {
@@ -22,6 +21,7 @@ export default function UpdateScreen() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [atribuicao, setAtribuicao] = useState("");
+  const [status, setStatus] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleShowPassword = () => {
@@ -31,23 +31,37 @@ export default function UpdateScreen() {
     { label: "Garçom", value: "1" },
     { label: "Cozinha", value: "2" },
   ];
+  const estaAtivoProps = [
+    { label: "ATIVO", value: true },
+    { label: "DESATIVADO", value: false },
+  ];
 
   const [id, setID] = useState(null);
 
   useEffect(() => {
     setID(AsyncStorage.getItem("id"));
-    setName(AsyncStorage.getItem("name"));
+    setName(AsyncStorage.getItem("nome"));
     setLogin(AsyncStorage.getItem("login"));
     setPassword(AsyncStorage.getItem("senha"));
     setAtribuicao(AsyncStorage.getItem("atribuicao"));
+    setStatus(AsyncStorage.getItem("estaAtivo"));
   }, []);
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (id) => {
+    console.log({
+      nome: name,
+      login: login,
+      senha: password,
+      atribuicao: atribuicao,
+      estaAtivo: status,
+    });
     await api
-      .put("/usuarios/${id}", {
+      .put(`/usuarios/${id}`, {
         nome: name,
         login: login,
+        senha: password,
         atribuicao: atribuicao,
+        estaAtivo: status,
       })
       .then((res) => {
         console.log(res);
@@ -104,14 +118,33 @@ export default function UpdateScreen() {
             />
             <Text>Cozinha</Text>
           </View>
-
-          <Button
-            disabled={!(name && login && password)}
-            style={styles.button}
-            title="Atualizar"
-            onPress={() => handleUpdate()}
-          ></Button>
         </View>
+
+        <Text style={styles.title}>Status</Text>
+        <View style={styles.inputRadioButton}>
+          <View style={styles.inputRadioButton}>
+            <RadioButton
+              value="true"
+              status={status === true ? "checked" : "unchecked"}
+              onPress={() => setStatus(true)}
+            />
+            <Text>Ativo</Text>
+          </View>
+          <View style={styles.inputRadioButton}>
+            <RadioButton
+              value="false"
+              status={status === false ? "checked" : "unchecked"}
+              onPress={() => setStatus(false)}
+            />
+            <Text>Desativado</Text>
+          </View>
+        </View>
+        <Button
+          disabled={!(name && login && password)}
+          style={styles.button}
+          title="Atualizar"
+          onPress={() => handleUpdate(id)}
+        ></Button>
       </View>
     </ScrollView>
   );
