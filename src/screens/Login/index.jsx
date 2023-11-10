@@ -8,11 +8,13 @@ import {
   TextInput,
 } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { user_login } from "../../services/user_api";
-import { AsyncStorage } from "@react-native-async-storage/async-storage";
 import React, { useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
+import api from "../../services/api";
 
 const Login = ({ navigation }) => {
   const { login } = useContext(AuthContext);
@@ -27,7 +29,7 @@ const Login = ({ navigation }) => {
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const checkPassword = checkPasswordValidity(password);
     if (!checkPassword) {
       user_login({
@@ -36,7 +38,7 @@ const Login = ({ navigation }) => {
       })
         .then((result) => {
           if (result.status == 200) {
-            AsyncStorage.setItem("AccessToken", result.data);
+            AsyncStorage.setItem("AccessToken", result.data.token);
             navigation.replace("Home");
           }
         })
