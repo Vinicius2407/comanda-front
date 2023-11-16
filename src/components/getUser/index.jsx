@@ -1,4 +1,5 @@
 import api from "../../services/api";
+import React from "react";
 
 const getUser = async (setData, setLoading, setError) => {
   setLoading(true);

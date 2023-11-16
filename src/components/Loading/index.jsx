@@ -1,23 +1,13 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { Body } from "./styles";
+import { Spinner } from "@ui-kitten/components";
 
-const Loading = () => (
-  <View style={[styles.container, styles.horizontal]}>
-    <ActivityIndicator />
-    <ActivityIndicator size="large" />
-  </View>
-);
+const LoadingComponent = () => {
+  return (
+    <Body>
+      <Spinner size="giant" />
+    </Body>
+  );
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  horizontal: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 10,
-  },
-});
-
-export default Loading;
+export default LoadingComponent;

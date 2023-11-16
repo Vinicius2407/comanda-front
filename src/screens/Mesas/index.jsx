@@ -1,49 +1,61 @@
-import {
-  View,
-  StyleSheet,
-  Image,
-  Input,
-  Button,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-
-import { user_login } from "../../services/user_api";
-import { AsyncStorage } from "@react-native-async-storage/async-storage";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { View, StyleSheet, Button, ScrollView, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../../context/AuthContext";
+import Mesa from "../../components/Mesa";
 
-const Mesas = ({ navigation }) => {
-  const [active, setActive] = useState(false);
-  const Press1 = () => setActive(!active);
+const Mesas = () => {
+  const [mesas, setMesas] = useState(
+    Array.from({ length: 3 }, (_, index) => ({
+      id: index + 1,
+      estado: 1,
+      estaAtiva: true,
+      cliente: "",
+      pedidos: [],
+    }))
+  );
+  const navigation = useNavigation();
 
-  const buttonColor = {
-    backgroundColor: active ? "green" : "red",
+  const selecionarMesa = (numeroMesa, nomeCliente) => {
+    setMesas((prevMesas) =>
+      prevMesas.map((mesa) =>
+        mesa.id === numeroMesa
+          ? {
+              ...mesa,
+              estado: 2,
+              estaAtiva: true,
+              cliente: nomeCliente,
+              pedidos: [],
+            }
+          : mesa
+      )
+    );
+    navigation.navigate("Comanda", {
+      mesa: { id: numeroMesa, cliente: nomeCliente, pedidos: [] },
+    });
+  };
+
+  const adicionarMesa = () => {
+    const novaMesa = {
+      id: mesas.length + 1,
+      estado: 1,
+      estaAtiva: true,
+      cliente: "",
+      pedidos: [],
+    };
+    setMesas([...mesas, novaMesa]);
   };
 
   return (
     <View style={styles.container}>
-      <View>
-        <TouchableOpacity style={styles.button} onPress={Press1}>
-          <Text>1</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <TouchableOpacity style={styles.button} onPress={Press1}>
-          <Text>2</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <TouchableOpacity style={styles.button} backgroundColor={buttonColor}>
-          <Text>3</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <TouchableOpacity style={styles.button} color={buttonColor}>
-          <Text>4</Text>
-        </TouchableOpacity>
+      <ScrollView>
+        <View style={styles.mesasContainer}>
+          {mesas.map((mesa, index) => (
+            <Mesa key={mesa.id} mesa={mesa} onSelect={selecionarMesa} />
+          ))}
+        </View>
+      </ScrollView>
+      <View style={styles.botaoContainer}>
+        <Button title="Nova Mesa" onPress={adicionarMesa} />
       </View>
     </View>
   );
@@ -51,19 +63,17 @@ const Mesas = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    paddingTop: 100,
     flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    justifyContent: "space-between",
-    flexWrap: "wrap",
   },
-  button: {
-    alignItems: "center",
-    backgroundColor: "green",
-    padding: 36,
-    justifyContent: "space-between",
+  mesasContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  botaoContainer: {
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
 });
 

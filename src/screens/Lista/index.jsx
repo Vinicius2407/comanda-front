@@ -9,7 +9,6 @@ import {
   Linking,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
 import getUser from "../../components/getUser";
 import Loading from "../../components/Loading";
@@ -22,8 +21,12 @@ const Lista = ({ navigation }) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    getUser(setData, setLoading, setError);
-  }, []);
+    const screen = navigation.addListener("focus", async () => {
+      getUser(setData, setLoading, setError);
+    });
+
+    return screen;
+  }, [navigation]);
 
   useEffect(() => {
     console.log(data);
@@ -51,7 +54,9 @@ const Lista = ({ navigation }) => {
               <Text>{data.atribuicao}</Text>
               <Button
                 title="Update"
-                onPress={() => navigation.navigate(UpdateScreen, setData(data))}
+                onPress={() =>
+                  navigation.navigate("UpdateScreen", { id: data.id })
+                }
               />
 
               <Button title="Excluir" onPress={() => excluirUsuario(data.id)} />

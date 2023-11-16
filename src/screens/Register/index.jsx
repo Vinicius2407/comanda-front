@@ -17,6 +17,7 @@ import api from "../../services/api";
 export default function Register() {
   const navigation = useNavigation();
 
+  const id = route?.params?.id;
   const [login, setLogin] = useState("");
   const [name, setName] = useState("");
   const [atribuicao, setAtribuicao] = useState("1");

@@ -1,154 +1,173 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  Input,
-  Button,
-  Text,
-  TextInput,
-  ScrollView,
-} from "react-native";
-import { RadioButton } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
-import api from "../../services/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Text, Input, Button, Radio, Layout } from "@ui-kitten/components";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { Body, Spacing } from "./styles";
+import { updateUser } from "../../functions/updateUser";
+import { StyleSheet } from "react-native";
+import { getUserById } from "../../functions/getById";
+import Modal from "./components/modal";
+import { Loading } from "../../components/Loading";
 
-export default function UpdateScreen() {
-  const navigation = useNavigation();
+const UpdateScreen = ({ route, navigation }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const [name, setName] = useState("");
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [atribuicao, setAtribuicao] = useState("");
-  const [status, setStatus] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const schema = yup.object({
+    nome: yup.string().required("Campo obrigatorio"),
+    login: yup.string().required("Campo obrigatorio"),
+    password: yup.string().nullable(),
+    atribuicao: yup.string().required("Campo obrigatorio"),
+  });
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  const atribuicoesProps = [
-    { label: "Garçom", value: "1" },
-    { label: "Cozinha", value: "2" },
-  ];
-  const estaAtivoProps = [
-    { label: "ATIVO", value: true },
-    { label: "DESATIVADO", value: false },
-  ];
 
-  const [id, setID] = useState(null);
+  const id = route?.params?.id;
 
   useEffect(() => {
-    setID(AsyncStorage.getItem("id"));
-    setName(AsyncStorage.getItem("nome"));
-    setLogin(AsyncStorage.getItem("login"));
-    setPassword(AsyncStorage.getItem("senha"));
-    setAtribuicao(AsyncStorage.getItem("atribuicao"));
-    setStatus(AsyncStorage.getItem("estaAtivo"));
-  }, []);
+    console.log(id);
+  }, [id]);
 
-  const handleUpdate = async (id) => {
-    console.log({
-      nome: name,
-      login: login,
-      senha: password,
-      atribuicao: atribuicao,
-      estaAtivo: status,
-    });
-    await api
-      .put(`/usuarios/${id}`, {
-        nome: name,
-        login: login,
-        senha: password,
-        atribuicao: atribuicao,
-        estaAtivo: status,
-      })
-      .then((res) => {
-        console.log(res);
-        navigation.navigate("Lista");
-      })
-      .catch((error) => console.log(error));
+  const save = (data) => {
+    updateUser(id, data, setLoading, setError, setSuccess);
   };
 
+  useEffect(() => {
+    const screen = navigation.addListener("focus", async () => {
+      if (id) {
+        const response = await getUserById(id);
+        setValue("nome", response?.nome);
+        setValue("login", response?.login);
+        setValue("atribuicao", response?.atribuicao);
+      }
+    });
+    return screen;
+  }, [navigation]);
+
+  const closeModal = () => {
+    setSuccess(false);
+    navigation.navigate("Lista");
+  };
   return (
-    <ScrollView>
-      <View style={[styles.container, styles.box]}>
-        <Text style={styles.title}>Nome</Text>
-
-        <TextInput
-          onChangeText={setName}
-          value={name}
-          placeholder="Digite seu nome"
-          style={styles.input}
+    <Body>
+      <Text>Nome: </Text>
+      <Controller
+        name="nome"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            onChangeText={(value) => onChange(value)}
+            value={value}
+            placeholder="Digite o nome"
+            size="large"
+          />
+        )}
+      />
+      {errors?.nome && <Text>{errors?.name?.message}</Text>}
+      <Text>Login:</Text>
+      <Controller
+        name="login"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            onChangeText={(value) => onChange(value)}
+            value={value}
+            placeholder="Digite o nome"
+            size="large"
+          />
+        )}
+      />
+      <Text>Senha:</Text>
+      <Controller
+        name="senha"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            onChangeText={(value) => onChange(value)}
+            value={value}
+            placeholder="Digite a nova senha"
+            size="large"
+          />
+        )}
+      />
+      {/* <Text>Atribuicao:</Text>
+      <Controller
+        name="atribuicao"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            onChangeText={(value) => onChange(value)}
+            value={value}
+            placeholder="1 ou 2"
+            size="large"
+          />
+        )}
+      /> */}
+      <Text>Atribuicao</Text>
+      <Layout>
+        <Controller
+          name="atribuicao"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <>
+              <Text>Garcom</Text>
+              <Radio checked={value === "1"} onChange={() => onChange("1")} />
+              <Text>Cozinha</Text>
+              <Radio
+                text="Opção 2"
+                checked={value === "2"}
+                onChange={() => onChange("2")}
+              />
+            </>
+          )}
         />
-
-        <Text style={styles.title}>Login</Text>
-        <TextInput
-          value={login}
-          onChangeText={setLogin}
-          placeholder="Digite seu login"
-          style={styles.input}
+      </Layout>
+      <Text>Status</Text>
+      <Layout>
+        <Controller
+          name="estaAtivo"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <>
+              <Text>Ativo</Text>
+              <Radio checked={value === true} onChange={() => onChange(true)} />
+              <Text>Desativado</Text>
+              <Radio
+                checked={value === false}
+                onChange={() => onChange(false)}
+              />
+            </>
+          )}
         />
-
-        <Text style={styles.title}>Nova Senha</Text>
-        <TextInput
-          secureTextEntry={!showPassword}
-          value={password}
-          placeholder="Senha"
-          onChangeText={setPassword}
-          onPress={toggleShowPassword}
-          style={styles.input}
+      </Layout>
+      <Spacing />
+      <Button onPress={handleSubmit(save)}>Salvar</Button>
+      {success && (
+        <Modal
+          open={success}
+          close={() => closeModal()}
+          message="Usuario editado com sucesso"
         />
-
-        <Text style={styles.title}>Atribuicao</Text>
-        <View style={styles.inputRadioButton}>
-          <View style={styles.inputRadioButton}>
-            <RadioButton
-              value="1"
-              status={atribuicao === "1" ? "checked" : "unchecked"}
-              onPress={() => setAtribuicao("1")}
-            />
-            <Text>Garçom</Text>
-          </View>
-          <View style={styles.inputRadioButton}>
-            <RadioButton
-              value="2"
-              status={atribuicao === "2" ? "checked" : "unchecked"}
-              onPress={() => setAtribuicao("2")}
-            />
-            <Text>Cozinha</Text>
-          </View>
-        </View>
-
-        <Text style={styles.title}>Status</Text>
-        <View style={styles.inputRadioButton}>
-          <View style={styles.inputRadioButton}>
-            <RadioButton
-              value="true"
-              status={status === true ? "checked" : "unchecked"}
-              onPress={() => setStatus(true)}
-            />
-            <Text>Ativo</Text>
-          </View>
-          <View style={styles.inputRadioButton}>
-            <RadioButton
-              value="false"
-              status={status === false ? "checked" : "unchecked"}
-              onPress={() => setStatus(false)}
-            />
-            <Text>Desativado</Text>
-          </View>
-        </View>
-        <Button
-          disabled={!(name && login && password)}
-          style={styles.button}
-          title="Atualizar"
-          onPress={() => handleUpdate(id)}
-        ></Button>
-      </View>
-    </ScrollView>
+      )}
+    </Body>
   );
-}
+};
+
+export default UpdateScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
