@@ -6,9 +6,11 @@ import * as yup from "yup";
 import { Body, Spacing } from "./styles";
 import { updateUser } from "../../functions/updateUser";
 import { StyleSheet } from "react-native";
-import { getUserById } from "../../functions/getById";
+import getUserById from "../../functions/getById";
 import Modal from "./components/modal";
 import { Loading } from "../../components/Loading";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api, setAuthToken } from "../../services/api";
 
 const UpdateScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -18,8 +20,9 @@ const UpdateScreen = ({ route, navigation }) => {
   const schema = yup.object({
     nome: yup.string().required("Campo obrigatorio"),
     login: yup.string().required("Campo obrigatorio"),
-    password: yup.string().nullable(),
+    senha: yup.string().nullable(),
     atribuicao: yup.string().required("Campo obrigatorio"),
+    estaAtivo: yup.boolean().required("Campo obrigatorio"),
   });
 
   const {
@@ -52,6 +55,7 @@ const UpdateScreen = ({ route, navigation }) => {
         setValue("nome", response?.nome);
         setValue("login", response?.login);
         setValue("atribuicao", response?.atribuicao);
+        setValue("estaAtivo", response?.estaAtivo);
       }
     });
     return screen;
@@ -124,13 +128,16 @@ const UpdateScreen = ({ route, navigation }) => {
           render={({ field: { onChange, value } }) => (
             <>
               <Text>Garcom</Text>
-              <Radio checked={value === "1"} onChange={() => onChange("1")} />
+              <Radio
+                checked={value === "GARCOM"}
+                onChange={() => onChange("GARCOM")}
+              />
               <Text>Cozinha</Text>
               <Radio
-                text="Opção 2"
-                checked={value === "2"}
-                onChange={() => onChange("2")}
+                checked={value === "COZINHA"}
+                onChange={() => onChange("COZINHA")}
               />
+              {console.log(value)}
             </>
           )}
         />

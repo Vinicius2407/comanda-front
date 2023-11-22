@@ -1,80 +1,82 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Button, ScrollView, FlatList } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
+import { View, TextInput, Button, Alert } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import Mesa from "../../components/Mesa";
+import api from "../../services/api";
+import Modal from "./components/modal";
+import { Body, Spacing } from "./styles";
 
-const Mesas = () => {
-  const [mesas, setMesas] = useState(
-    Array.from({ length: 3 }, (_, index) => ({
-      id: index + 1,
-      estado: 1,
-      estaAtiva: true,
-      cliente: "",
-      pedidos: [],
-    }))
-  );
-  const navigation = useNavigation();
+const Mesas = ({ navigation }) => {
+  const [mesas, setMesas] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMesa, setSelectedMesa] = useState(null);
 
-  const selecionarMesa = (numeroMesa, nomeCliente) => {
-    setMesas((prevMesas) =>
-      prevMesas.map((mesa) =>
-        mesa.id === numeroMesa
-          ? {
-              ...mesa,
-              estado: 2,
-              estaAtiva: true,
-              cliente: nomeCliente,
-              pedidos: [],
-            }
-          : mesa
-      )
-    );
-    navigation.navigate("Comanda", {
-      mesa: { id: numeroMesa, cliente: nomeCliente, pedidos: [] },
-    });
+  useEffect(() => {
+    api
+      .get("/mesas")
+      .then((response) => setMesas(response.data))
+      .catch((error) => console.error("Erro ao buscar mesas:", error));
+  }, []);
+
+  const onMesaPress = (id, estaAtiva) => {
+    if (!estaAtiva) {
+      setSelectedMesa(id);
+      setModalVisible(true);
+    }
   };
 
-  const adicionarMesa = () => {
-    const novaMesa = {
-      id: mesas.length + 1,
-      estado: 1,
-      estaAtiva: true,
-      cliente: "",
-      pedidos: [],
-    };
-    setMesas([...mesas, novaMesa]);
+  const ocuparMesa = (nome) => {
+    if (selectedMesa) {
+      const updatedMesas = mesas.map((mesa) => {
+        if (mesa.id === selectedMesa && mesa.estado === "LIVRE") {
+          return {
+            ...mesa,
+            estado: "OCUPADA",
+            estaAtiva: false,
+            nomeCliente: nome,
+          };
+        }
+        return mesa;
+      });
+
+      setMesas(updatedMesas);
+
+      axios
+        .put(`/mesas/${selectedMesa}`, {
+          estado: "OCUPADA",
+          estaAtiva: false,
+          nomeCliente: nome,
+        })
+        .then((response) => {
+          console.log("Mesa ocupada com sucesso");
+          navigation.navigate("Comanda", {
+            idMesa: selectedMesa,
+            nomeCliente: nome,
+            totalAPagar: 0,
+            pedidos: [],
+          });
+        })
+        .catch((error) => console.error("Erro ao ocupar mesa:", error));
+    }
+
+    setModalVisible(false);
+    setSelectedMesa(null);
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.mesasContainer}>
-          {mesas.map((mesa, index) => (
-            <Mesa key={mesa.id} mesa={mesa} onSelect={selecionarMesa} />
-          ))}
-        </View>
-      </ScrollView>
-      <View style={styles.botaoContainer}>
-        <Button title="Nova Mesa" onPress={adicionarMesa} />
+    <Body>
+      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+        {mesas.map((mesa) => (
+          <Mesa key={mesa.id} {...mesa} onMesaPress={onMesaPress} />
+        ))}
       </View>
-    </View>
+      <Modal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={ocuparMesa}
+      />
+    </Body>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  mesasContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-  botaoContainer: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-  },
-});
 
 export default Mesas;

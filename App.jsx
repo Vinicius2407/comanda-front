@@ -5,19 +5,17 @@ import { ApplicationProvider } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import store from "./store";
 import { Provider } from "react-redux";
-import { AuthProvider } from "./src/context/AuthContext";
+
 import AppNav from "./src/navigation/AppNav";
 
 export default function App() {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
-      <AuthProvider>
-        <Provider store={store}>
-          <NavigationContainer independent={true}>
-            <AppNav />
-          </NavigationContainer>
-        </Provider>
-      </AuthProvider>
+      <Provider store={store}>
+        <NavigationContainer independent={true}>
+          <AppNav />
+        </NavigationContainer>
+      </Provider>
     </ApplicationProvider>
   );
 }

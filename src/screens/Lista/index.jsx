@@ -12,8 +12,8 @@ import React, { useEffect, useState } from "react";
 import { Card } from "react-native-paper";
 import getUser from "../../components/getUser";
 import Loading from "../../components/Loading";
-import UpdateScreen from "../UpdateScreen";
-import api from "../../services/api";
+
+import { api } from "../../services/api";
 
 const Lista = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -21,11 +21,9 @@ const Lista = ({ navigation }) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const screen = navigation.addListener("focus", async () => {
+    navigation.addListener("focus", async () => {
       getUser(setData, setLoading, setError);
     });
-
-    return screen;
   }, [navigation]);
 
   useEffect(() => {

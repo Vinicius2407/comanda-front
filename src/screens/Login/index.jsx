@@ -9,16 +9,11 @@ import {
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import React, { useState } from "react";
 import { user_login } from "../../services/user_api";
-import React, { useContext, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../../context/AuthContext";
-import api from "../../services/api";
+import { api, setAuthToken } from "../../services/api";
 
 const Login = ({ navigation }) => {
-  const { login } = useContext(AuthContext);
-
   const [userLogin, setUserLogin] = useState(null);
   const [password, setPassword] = useState(null);
 
@@ -38,7 +33,12 @@ const Login = ({ navigation }) => {
       })
         .then((result) => {
           if (result.status == 200) {
-            AsyncStorage.setItem("AccessToken", result.data.token);
+            const token = result.data.token;
+            AsyncStorage.setItem("Token", token);
+
+            // Defina o token JWT nos cabeçalhos
+            setAuthToken(token);
+            console.log(token);
             navigation.replace("Home");
           }
         })

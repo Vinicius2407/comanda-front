@@ -1,10 +1,13 @@
-import api from "../services/api";
+import { api, setAuthToken } from "../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const getUserById = async (id) => {
+const getUserById = async (id) => {
   try {
     const response = await api.get(`/usuarios/${id}`);
     return response?.data;
   } catch (e) {
-    console.log("teste");
+    console.log(e);
   }
 };
+
+export default getUserById;

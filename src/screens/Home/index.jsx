@@ -13,8 +13,9 @@ import { useNavigation } from "@react-navigation/native";
 export default function Home() {
   const navigation = useNavigation();
 
-  const handleNavLogin = () => {
-    navigation.navigate("Login");
+  const handleLogoutPress = () => {
+    // Navegue para a tela de logout
+    navigation.navigate("Logout");
   };
 
   const handleNavCardapio = () => {
@@ -27,6 +28,9 @@ export default function Home() {
 
   const handleNavLista = () => {
     navigation.navigate("Lista");
+  };
+  const handleNavLogin = () => {
+    navigation.navigate("Login");
   };
 
   return (
@@ -68,6 +72,16 @@ export default function Home() {
         title="Lista"
         onPress={() => {
           handleNavLista();
+        }}
+      >
+        Lista
+      </Button>
+
+      <Button
+        style={styles.button1}
+        title="Logout"
+        onPress={() => {
+          handleLogoutPress();
         }}
       >
         Lista

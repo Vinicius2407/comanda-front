@@ -1,11 +1,15 @@
-import api from "../../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api, setAuthToken } from "../../services/api";
 import React from "react";
 
 const getUser = async (setData, setLoading, setError) => {
   setLoading(true);
 
   try {
+    // const token = await AsyncStorage.getItem("Token");
+    // setAuthToken(token);
     const response = await api.get("/usuarios");
+
     setData(response?.data);
 
     setLoading(false);

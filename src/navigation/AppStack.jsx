@@ -8,6 +8,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Mesas from "../screens/Mesas";
 import Lista from "../screens/Lista";
 import UpdateScreen from "../screens/UpdateScreen";
+import Comanda from "../screens/Comanda";
+import LogoutComponent from "../components/Logout";
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +53,16 @@ const AppStack = () => {
       <Stack.Screen
         name="UpdateScreen"
         component={UpdateScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Comanda"
+        component={Comanda}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Logout"
+        component={LogoutComponent}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
