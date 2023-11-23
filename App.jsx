@@ -7,15 +7,18 @@ import store from "./store";
 import { Provider } from "react-redux";
 
 import AppNav from "./src/navigation/AppNav";
+import { ComandaProvider } from "./src/context/ComandaContext";
 
 export default function App() {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
-      <Provider store={store}>
-        <NavigationContainer independent={true}>
-          <AppNav />
-        </NavigationContainer>
-      </Provider>
+      <ComandaProvider>
+        <Provider store={store}>
+          <NavigationContainer independent={true}>
+            <AppNav />
+          </NavigationContainer>
+        </Provider>
+      </ComandaProvider>
     </ApplicationProvider>
   );
 }

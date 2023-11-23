@@ -1,26 +1,32 @@
+// Mesas.js
 import React, { useState, useEffect } from "react";
-import { View, TextInput, Button, Alert } from "react-native";
-import { useForm, Controller } from "react-hook-form";
+import { View, TouchableOpacity, Text } from "react-native";
+import NomeClienteModal from "./components/modal";
+import { useNavigation } from "@react-navigation/native";
+import { useComanda } from "../../context/ComandaContext";
+import { api } from "../../services/api";
 import Mesa from "../../components/Mesa";
-import api from "../../services/api";
-import Modal from "./components/modal";
-import { Body, Spacing } from "./styles";
 
-const Mesas = ({ navigation }) => {
+const Mesas = ({ id, estaAtiva }) => {
   const [mesas, setMesas] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMesa, setSelectedMesa] = useState(null);
+  const navigation = useNavigation();
+  const { getComanda } = useComanda();
 
   useEffect(() => {
     api
       .get("/mesas")
       .then((response) => setMesas(response.data))
+
       .catch((error) => console.error("Erro ao buscar mesas:", error));
   }, []);
 
   const onMesaPress = (id, estaAtiva) => {
     if (!estaAtiva) {
-      setSelectedMesa(id);
+      const comanda = getComanda(id);
+      navigation.navigate("Comanda", comanda);
+    } else {
       setModalVisible(true);
     }
   };
@@ -41,7 +47,7 @@ const Mesas = ({ navigation }) => {
 
       setMesas(updatedMesas);
 
-      axios
+      api
         .put(`/mesas/${selectedMesa}`, {
           estado: "OCUPADA",
           estaAtiva: false,
@@ -64,19 +70,18 @@ const Mesas = ({ navigation }) => {
   };
 
   return (
-    <Body>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
         {mesas.map((mesa) => (
           <Mesa key={mesa.id} {...mesa} onMesaPress={onMesaPress} />
         ))}
       </View>
-      <Modal
+      <NomeClienteModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         onConfirm={ocuparMesa}
       />
-    </Body>
+    </View>
   );
 };
-
 export default Mesas;

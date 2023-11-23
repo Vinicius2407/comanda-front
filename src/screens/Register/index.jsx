@@ -12,12 +12,11 @@ import React, { useState } from "react";
 import { RadioButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
-import api from "../../services/api";
+import { api } from "../../services/api";
 
 export default function Register() {
   const navigation = useNavigation();
 
-  const id = route?.params?.id;
   const [login, setLogin] = useState("");
   const [name, setName] = useState("");
   const [atribuicao, setAtribuicao] = useState("1");
@@ -32,12 +31,6 @@ export default function Register() {
   ];
 
   const handlePost = async () => {
-    console.log({
-      nome: name,
-      login: login,
-      senha: password,
-      atribuicao: atribuicao,
-    });
     await api
       .post("/auth/register", {
         nome: name,
@@ -49,7 +42,7 @@ export default function Register() {
         console.log(res);
         navigation.navigate("Login");
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error.response.data));
   };
 
   const toggleShowPassword = () => {
@@ -64,9 +57,6 @@ export default function Register() {
     }
   };
 
-  const handleNavLogin = () => {
-    navigation.navigate("Login");
-  };
   return (
     <ScrollView>
       <View style={[styles.container, styles.box]}>

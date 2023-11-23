@@ -6,9 +6,8 @@ const api = axios.create({
 });
 
 const setAuthToken = async (token) => {
-  console.log("gay");
   if (token) {
-    console.log("vagner");
+    console.log("logado");
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     await AsyncStorage.setItem("Token", token);
   }
@@ -21,7 +20,7 @@ const setAuthToken = async (token) => {
 
 api.interceptors.request.use(
   async (config) => {
-    console.log("teste");
+    console.log("token usado");
     await setAuthToken(); // Chame a função para definir o token antes de cada requisição
     return config;
   },

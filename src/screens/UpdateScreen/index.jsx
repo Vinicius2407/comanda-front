@@ -8,9 +8,6 @@ import { updateUser } from "../../functions/updateUser";
 import { StyleSheet } from "react-native";
 import getUserById from "../../functions/getById";
 import Modal from "./components/modal";
-import { Loading } from "../../components/Loading";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { api, setAuthToken } from "../../services/api";
 
 const UpdateScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -107,19 +104,6 @@ const UpdateScreen = ({ route, navigation }) => {
           />
         )}
       />
-      {/* <Text>Atribuicao:</Text>
-      <Controller
-        name="atribuicao"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            onChangeText={(value) => onChange(value)}
-            value={value}
-            placeholder="1 ou 2"
-            size="large"
-          />
-        )}
-      /> */}
       <Text>Atribuicao</Text>
       <Layout>
         <Controller

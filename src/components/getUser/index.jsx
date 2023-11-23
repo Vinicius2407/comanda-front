@@ -6,8 +6,6 @@ const getUser = async (setData, setLoading, setError) => {
   setLoading(true);
 
   try {
-    // const token = await AsyncStorage.getItem("Token");
-    // setAuthToken(token);
     const response = await api.get("/usuarios");
 
     setData(response?.data);
