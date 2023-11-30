@@ -10,6 +10,7 @@ import Lista from "../screens/Lista";
 import UpdateScreen from "../screens/UpdateScreen";
 import Comanda from "../screens/Comanda";
 import LogoutComponent from "../components/Logout";
+import Cardapio from "../screens/Cardapio";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,8 +34,8 @@ const AppStack = () => {
       />
 
       <Stack.Screen
-        name="ShoppingCart"
-        component={ShoppingCart}
+        name="Cardapio"
+        component={Cardapio}
         options={{ headerShown: false }}
       />
 

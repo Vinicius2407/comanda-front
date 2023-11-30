@@ -112,9 +112,15 @@ const UpdateScreen = ({ route, navigation }) => {
           render={({ field: { onChange, value } }) => (
             <>
               <Text>Garcom</Text>
-              <Radio checked={value === "2"} onChange={() => onChange("2")} />
-              <Text>Admin</Text>
-              <Radio checked={value === "3"} onChange={() => onChange("3")} />
+              <Radio
+                checked={value === "GARCOM"}
+                onChange={() => onChange("GARCOM")}
+              />
+              <Text>Cozinha</Text>
+              <Radio
+                checked={value === "COZINHA"}
+                onChange={() => onChange("COZINHA")}
+              />
               {console.log(value)}
             </>
           )}

@@ -4,7 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { ApplicationProvider } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import store from "./store";
-import { Provider } from "react-redux";
 
 import AppNav from "./src/navigation/AppNav";
 import { ComandaProvider } from "./src/context/ComandaContext";
@@ -13,11 +12,9 @@ export default function App() {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
       <ComandaProvider>
-        <Provider store={store}>
-          <NavigationContainer independent={true}>
-            <AppNav />
-          </NavigationContainer>
-        </Provider>
+        <NavigationContainer independent={true}>
+          <AppNav />
+        </NavigationContainer>
       </ComandaProvider>
     </ApplicationProvider>
   );

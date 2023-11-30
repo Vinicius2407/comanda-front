@@ -39,11 +39,10 @@ const Login = ({ navigation }) => {
             // Defina o token JWT nos cabeçalhos
             setAuthToken(token);
             console.log(token);
-            console.log(result.data);
-            if (result.data.atribuicao == "GARCOM") {
+            if (result.atribuicao == "GARCOM") {
               navigation.navigate("Mesas");
             }
-            if (result.data.atribuicao == "SUPER_USUARIO") {
+            if (result.atribuicao == "ADMIN") {
               navigation.navigate("Home");
             }
           }

@@ -2,8 +2,9 @@ import React from "react";
 import { Modal, View, Text, TextInput, Button } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { StyleSheet } from "react-native";
+import { onDeleteMesa } from "../index";
 
-const NomeClienteModal = ({ isVisible, onClose, onConfirm }) => {
+const DeletarMesaModal = ({ isVisible, onClose, onConfirm }) => {
   const styles = StyleSheet.create({
     container: {
       minHeight: 400,
@@ -16,8 +17,8 @@ const NomeClienteModal = ({ isVisible, onClose, onConfirm }) => {
   const { control, handleSubmit, setValue } = useForm();
 
   const onSubmit = (data) => {
-    onConfirm(data.nomeCliente);
-    setValue("nomeCliente", ""); // Limpar o campo após a confirmação
+    onConfirm(data.id);
+    setValue("id", ""); // Limpar o campo após a confirmação
     onClose();
   };
 
@@ -33,7 +34,9 @@ const NomeClienteModal = ({ isVisible, onClose, onConfirm }) => {
         <View
           style={{ padding: 20, backgroundColor: "white", borderRadius: 10 }}
         >
-          <Text style={{ marginBottom: 10 }}>Nome do Cliente</Text>
+          <Text style={{ marginBottom: 10 }}>
+            Id da mesa que deseja excluir
+          </Text>
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -41,7 +44,7 @@ const NomeClienteModal = ({ isVisible, onClose, onConfirm }) => {
                 onBlur={onBlur}
                 onChangeText={(value) => onChange(value)}
                 value={value}
-                placeholder="Nome do Cliente"
+                placeholder="id"
               />
             )}
             name="nomeCliente"
@@ -55,4 +58,4 @@ const NomeClienteModal = ({ isVisible, onClose, onConfirm }) => {
   );
 };
 
-export default NomeClienteModal;
+export default DeletarMesaModal;
