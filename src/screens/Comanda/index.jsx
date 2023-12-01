@@ -2,13 +2,25 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import CardPedidos from "./components/CardPedidos";
 import { api } from "../../services/api";
+import { useUserContext } from "../../context/UserContext";
 
 const Comanda = ({ navigation, route }) => {
   const [pedidos, setPedidos] = useState([]);
   const [post, setPost] = useState(null);
+  const { userId, setContextUserId } = useUserContext();
+  const { idComanda, idMesa } = route.params;
 
-  const { idComanda } = route.params;
-
+  const criarPedido = async (idComanda) => {
+    try {
+      response = api.post(`/pedidos/comanda/${idComanda}`, {
+        idUsuario: userId,
+        idMesa: idMesa,
+      });
+      navigation.navigate("Cardapio");
+    } catch {
+      console.log(error);
+    }
+  };
   // Atualizando a lista de pedidos
 
   // const handleFecharComanda = async (id) => {
@@ -31,17 +43,14 @@ const Comanda = ({ navigation, route }) => {
   //     // Adicione lógica para tratamento de erro, se necessário
   //   }
   // };
-  // useEffect(() => {
-  //   api.get(`/comandas/${idComanda}`).then((response) => {
-  //     setPost(response.data);
-  //     console.log(response.data);
-  //   });
-  // }, []);
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
       <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
         Comanda: {idComanda}
+      </Text>
+      <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
+        Usuario id : {userId}
       </Text>
       <View>
         {pedidos.map((pedido) => (
@@ -52,7 +61,7 @@ const Comanda = ({ navigation, route }) => {
       <Button
         title="Adicionar Pedido"
         onPress={() => {
-          navigation.navigate("Cardapio");
+          criarPedido(idComanda);
         }}
       />
       {/* <Button title="Excluir Comanda" onPress={handleFecharComanda(id)} /> */}

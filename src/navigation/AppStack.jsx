@@ -3,8 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Register from "../screens/Register";
 import Login from "../screens/Login";
 import Home from "../screens/Home";
-import ShoppingCart from "../screens/ShoppingCart";
-import Ionicons from "react-native-vector-icons/Ionicons";
+
 import Mesas from "../screens/Mesas";
 import Lista from "../screens/Lista";
 import UpdateScreen from "../screens/UpdateScreen";

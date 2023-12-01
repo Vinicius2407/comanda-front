@@ -12,10 +12,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
 import { user_login } from "../../services/user_api";
 import { api, setAuthToken } from "../../services/api";
+import { useUserContext } from "../../context/UserContext";
 
 const Login = ({ navigation }) => {
   const [userLogin, setUserLogin] = useState(null);
   const [password, setPassword] = useState(null);
+  const { loginContext } = useUserContext();
 
   const checkPasswordValidity = (value) => {
     const isNonWhiteSpace = /^\S*$/;
@@ -27,19 +29,13 @@ const Login = ({ navigation }) => {
   const handleLogin = async () => {
     const checkPassword = checkPasswordValidity(password);
     if (!checkPassword) {
-      user_login({
-        login: userLogin,
-        senha: password,
-      })
-        .then((result) => {
+      try {
+        loginContext({ login: userLogin, senha: password }).then((result) => {
           if (result.status == 200) {
             const token = result.data.token;
             AsyncStorage.setItem("Token", token);
-
             // Defina o token JWT nos cabeçalhos
             setAuthToken(token);
-            console.log(token);
-            console.log(result.data);
             if (result.data.atribuicao == "GARCOM") {
               navigation.navigate("Mesas");
             }
@@ -47,18 +43,13 @@ const Login = ({ navigation }) => {
               navigation.navigate("Home");
             }
           }
-        })
-        .catch((err) => {
-          console.log(err);
         });
+      } catch (error) {}
     } else {
       alert(checkPassword);
     }
   };
 
-  const handleNavHome = () => {
-    navigation.navigate("Home");
-  };
   const handleNavCadastro = () => {
     navigation.navigate("Register");
   };

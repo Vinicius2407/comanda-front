@@ -24,7 +24,9 @@ const Mesas = ({ id, estaAtiva }) => {
   };
 
   const onMesaPress = (id, estaAtiva, idComanda) => {
+    console.log(id, estaAtiva, idComanda);
     if (!estaAtiva) {
+      setSelectedMesa(id);
       navigation.navigate("Comanda", { idComanda });
     } else {
       setSelectedMesa(id);
@@ -36,7 +38,7 @@ const Mesas = ({ id, estaAtiva }) => {
     try {
       // Antes de navegar para a página, você pode verificar se há um ID de comanda válido
       if (idComanda) {
-        navigation.navigate("Comanda", { idComanda });
+        navigation.navigate("Comanda", { idComanda: idComanda });
       } else {
         console.error("ID de comanda inválido");
       }
@@ -52,6 +54,7 @@ const Mesas = ({ id, estaAtiva }) => {
         const response = await api.post("/comandas", {
           nomeCliente,
           idMesa: selectedMesa,
+          idComanda: idComanda,
         });
         const idComanda = response.data.idComanda;
 
@@ -63,6 +66,7 @@ const Mesas = ({ id, estaAtiva }) => {
               ...mesa,
               estado: "OCUPADA",
               estaAtiva: false,
+              idComanda: idComanda,
             };
           }
           return mesa;
@@ -73,6 +77,7 @@ const Mesas = ({ id, estaAtiva }) => {
           .put(`/mesas/${selectedMesa}`, {
             estado: "OCUPADA",
             estaAtiva: false,
+            idComanda: idComanda,
           })
           .then((response) => {
             console.log("Mesa ocupada com sucesso");
@@ -105,7 +110,13 @@ const Mesas = ({ id, estaAtiva }) => {
       </TouchableOpacity>
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
         {mesas.map((mesa) => (
-          <Mesa key={mesa.id} {...mesa} onMesaPress={onMesaPress} />
+          <Mesa
+            key={mesa.id}
+            {...mesa}
+            onMesaPress={() =>
+              onMesaPress(mesa.id, mesa.estaAtiva, mesa.idComanda)
+            }
+          />
         ))}
       </View>
       <NomeClienteModal
