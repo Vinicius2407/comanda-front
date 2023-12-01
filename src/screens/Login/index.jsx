@@ -18,7 +18,11 @@ const Login = ({ navigation }) => {
   const [userLogin, setUserLogin] = useState(null);
   const [password, setPassword] = useState(null);
   const { loginContext } = useUserContext();
+  const [showPassword, setShowPassword] = useState(false);
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   const checkPasswordValidity = (value) => {
     const isNonWhiteSpace = /^\S*$/;
     if (!isNonWhiteSpace.test(value)) {
@@ -68,10 +72,12 @@ const Login = ({ navigation }) => {
 
       <Text style={styles.title}>Senha</Text>
       <TextInput
+        secureTextEntry={!showPassword}
         onChangeText={(passwordText) => {
           setPassword(passwordText);
         }}
         value={password}
+        onPress={toggleShowPassword}
         placeholder="Senha"
         style={styles.input}
       />

@@ -10,13 +10,12 @@ import {
 } from "react-native";
 import { api } from "../../services/api";
 
-const Cardapio = () => {
+const Cardapio = ({ navigation }) => {
   const [categorias, setCategorias] = useState({});
   const [valorTotal, setValorTotal] = useState(0);
   const [itens, setItens] = useState([]);
 
   useEffect(() => {
-    // Função para buscar os itens do cardápio quando o componente é montado
     const fetchData = async () => {
       try {
         const response = await api.get("/cardapio");
@@ -26,9 +25,8 @@ const Cardapio = () => {
       }
     };
 
-    // Chame a função para buscar os itens do cardápio
     fetchData();
-  }, []); // Execute o efeito apenas uma vez durante a montagem do componente
+  }, []);
 
   const handleIncrement = (id) => {
     const newItens = itens.map((item) =>
@@ -84,7 +82,6 @@ const Cardapio = () => {
     </View>
   );
 
-  // Agrupa os itens por categoria
   const groupedItens = itens.reduce((acc, item) => {
     if (!acc[item.categoria]) {
       acc[item.categoria] = [];
@@ -93,11 +90,22 @@ const Cardapio = () => {
     return acc;
   }, {});
 
-  // Converte os dados agrupados para o formato esperado pela SectionList
   const sectionData = Object.keys(groupedItens).map((categoria) => ({
     title: categoria,
     data: groupedItens[categoria],
   }));
+
+  const addPedido = async () => {
+    try {
+      const result = await api.post(`/pedidos/pedido/${idPedido}`, {
+        cardapioId: id,
+        quantidade: quantidade,
+        observacoes: observacoes,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
@@ -110,9 +118,10 @@ const Cardapio = () => {
       <Text
         style={{ marginTop: 20, fontSize: 18 }}
       >{`Valor Total: R$ ${valorTotal.toFixed(2)}`}</Text>
+      <Button title="Finalizar Pedido" onPress={() => addPedido()} />
       <Button
-        title="Finalizar Pedido"
-        onPress={() => alert("Pedido finalizado!")}
+        title="Adicionar item"
+        onPress={() => navigation.navigate("addCardapio")}
       />
     </View>
   );

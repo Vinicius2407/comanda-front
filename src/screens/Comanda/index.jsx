@@ -10,39 +10,16 @@ const Comanda = ({ navigation, route }) => {
   const { userId, setContextUserId } = useUserContext();
   const { idComanda, idMesa } = route.params;
 
-  const criarPedido = async (idComanda) => {
+  const criarPedido = async () => {
     try {
-      response = api.post(`/pedidos/comanda/${idComanda}`, {
+      await api.post(`/pedidos/comanda/${idComanda}`, {
         idUsuario: userId,
         idMesa: idMesa,
       });
-      navigation.navigate("Cardapio");
-    } catch {
+    } catch (error) {
       console.log(error);
     }
   };
-  // Atualizando a lista de pedidos
-
-  // const handleFecharComanda = async (id) => {
-  //   try {
-  //     // Adicione a lógica para fechar a comanda (excluindo)
-  //     await api.delete(`/comandas/${id}`);
-
-  //     // Adicione a lógica para desocupar a mesa (atualizar o estado para ativo)
-  //     await api.put(`/mesas/${idMesa}`, {
-  //       estaAtiva: true,
-  //     });
-
-  //     // Agora, podemos chamar a função para desocupar a mesa no componente pai
-  //     onMesaDesocupada(idMesa);
-
-  //     // Volte para a tela anterior após fechar a comanda
-  //     navigation.goBack();
-  //   } catch (error) {
-  //     console.error("Erro ao fechar a comanda:", error);
-  //     // Adicione lógica para tratamento de erro, se necessário
-  //   }
-  // };
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -60,11 +37,8 @@ const Comanda = ({ navigation, route }) => {
 
       <Button
         title="Adicionar Pedido"
-        onPress={() => {
-          criarPedido(idComanda);
-        }}
+        onPress={() => navigation.navigate("Cardapio")}
       />
-      {/* <Button title="Excluir Comanda" onPress={handleFecharComanda(id)} /> */}
     </View>
   );
 };

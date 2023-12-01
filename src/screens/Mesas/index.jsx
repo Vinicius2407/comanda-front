@@ -13,8 +13,8 @@ const Mesas = ({ id, estaAtiva }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    fetchMesas(); // Chame a função de busca de mesas ao montar o componente
-  }, []); // O segundo parâmetro vazio faz com que useEffect seja chamado apenas uma vez na montagem do componente
+    fetchMesas();
+  }, []);
 
   const fetchMesas = () => {
     api
@@ -36,7 +36,6 @@ const Mesas = ({ id, estaAtiva }) => {
 
   const onComanda = async (idComanda) => {
     try {
-      // Antes de navegar para a página, você pode verificar se há um ID de comanda válido
       if (idComanda) {
         navigation.navigate("Comanda", { idComanda: idComanda });
       } else {
@@ -84,7 +83,6 @@ const Mesas = ({ id, estaAtiva }) => {
           });
       } catch (error) {
         console.error("Erro ao criar a comanda:", error);
-        // Adicione lógica para tratamento de erro, se necessário
       }
     }
     setModalVisible(false);
@@ -96,7 +94,6 @@ const Mesas = ({ id, estaAtiva }) => {
       await api.post("/mesas");
       console.log("Nova mesa criada");
 
-      // Após criar a nova mesa, atualize a lista de mesas
       fetchMesas();
     } catch (error) {
       console.error("Erro ao criar nova mesa:", error.message);
@@ -130,8 +127,8 @@ const Mesas = ({ id, estaAtiva }) => {
 const styles = StyleSheet.create({
   addButton: {
     position: "absolute",
-    top: 20, // Ajuste conforme necessário para a posição desejada
-    right: 20, // Ajuste conforme necessário para a posição desejada
+    top: 20,
+    right: 20,
     backgroundColor: "green",
     padding: 10,
     borderRadius: 5,

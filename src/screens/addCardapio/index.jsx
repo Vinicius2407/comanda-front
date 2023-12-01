@@ -14,33 +14,29 @@ import { useNavigation } from "@react-navigation/native";
 
 import { api } from "../../services/api";
 
-export default function Register() {
+export default function AddCardapio() {
   const navigation = useNavigation();
 
-  const [login, setLogin] = useState("");
-  const [name, setName] = useState("");
-  const [atribuicao, setAtribuicao] = useState("2");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [senhasIguais, setSenhasIguais] = useState(false);
+  const [nome, setNome] = useState("");
+  const [categoria, setCategoria] = useState("1");
+  const [valor, setValor] = useState("");
 
-  const atribuicoesProps = [
-    { label: "GARCOM", value: "1" },
-    { label: "ADMIN", value: "2" },
+  const categoriasProps = [
+    { label: "PRATO", value: "1" },
+    { label: "BEBIDA", value: "2" },
+    { label: "SOBREMESA", value: "3" },
   ];
 
   const handlePost = async () => {
     await api
-      .post("/auth/register", {
-        nome: name,
-        login: login,
-        senha: password,
-        atribuicao: atribuicao,
+      .post("/cardapio", {
+        nome: nome,
+        categoria: categoria,
+        valor: valor,
       })
       .then((res) => {
         console.log(res);
-        navigation.navigate("Login");
+        navigation.navigate("Cardapio");
       })
       .catch((error) => console.log(error.response.data));
   };
@@ -49,79 +45,56 @@ export default function Register() {
     setShowPassword(!showPassword);
   };
 
-  const verificaSenha = () => {
-    if (confirmPassword === password) {
-      setSenhasIguais(true);
-    } else {
-      setSenhasIguais(false);
-    }
-  };
-
   return (
     <ScrollView>
       <View style={[styles.container, styles.box]}>
         <Text style={styles.title}>Nome</Text>
 
         <TextInput
-          onChangeText={setName}
-          value={name}
-          placeholder="Digite seu nome"
+          onChangeText={setNome}
+          value={nome}
+          placeholder="Nome do item"
           style={styles.input}
         />
 
-        <Text style={styles.title}>Login</Text>
         <TextInput
-          value={login}
-          onChangeText={setLogin}
-          placeholder="Digite seu login"
+          onChangeText={setValor}
+          value={valor}
+          placeholder="Valor"
           style={styles.input}
         />
 
-        <Text style={styles.title}>Senha</Text>
-        <TextInput
-          secureTextEntry={!showPassword}
-          value={password}
-          placeholder="Senha"
-          onChangeText={setPassword}
-          onPress={toggleShowPassword}
-          style={styles.input}
-        />
-
-        <Text style={styles.title}>Confirme sua senha</Text>
-        <TextInput
-          secureTextEntry={!showPassword}
-          placeholder="Confirme sua senha"
-          value={confirmPassword}
-          onChangeText={(value) => {
-            setConfirmPassword(value), verificaSenha;
-          }}
-          style={styles.input}
-        />
-
-        <Text style={styles.title}>Atribuicao</Text>
+        <Text style={styles.title}>Categoria</Text>
         <View style={styles.inputRadioButton}>
           <View style={styles.inputRadioButton}>
             <RadioButton
-              value="2"
-              status={atribuicao === "2" ? "checked" : "unchecked"}
-              onPress={() => setAtribuicao("2")}
+              value="1"
+              status={categoria === "1" ? "checked" : "unchecked"}
+              onPress={() => setCategoria("1")}
             />
-            <Text>Garçom</Text>
+            <Text>PRATO</Text>
           </View>
           <View style={styles.inputRadioButton}>
             <RadioButton
-              value="3"
-              status={atribuicao === "3" ? "checked" : "unchecked"}
-              onPress={() => setAtribuicao("3")}
+              value="2"
+              status={categoria === "2" ? "checked" : "unchecked"}
+              onPress={() => setCategoria("2")}
             />
-            <Text>Admin</Text>
+            <Text>BEBIDA</Text>
+          </View>
+          <View style={styles.inputRadioButton}>
+            <RadioButton
+              value="2"
+              status={categoria === "3" ? "checked" : "unchecked"}
+              onPress={() => setCategoria("3")}
+            />
+            <Text>SOBREMESA</Text>
           </View>
         </View>
 
         <Button
-          disabled={!(name && login && password)}
           style={styles.button}
-          title="CADASTRAR"
+          title="Confirmar"
           onPress={() => handlePost()}
         ></Button>
       </View>

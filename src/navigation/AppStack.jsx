@@ -10,6 +10,7 @@ import UpdateScreen from "../screens/UpdateScreen";
 import Comanda from "../screens/Comanda";
 import LogoutComponent from "../components/Logout";
 import Cardapio from "../screens/Cardapio";
+import addCardapio from "../screens/addCardapio";
 
 const Stack = createNativeStackNavigator();
 
@@ -63,6 +64,11 @@ const AppStack = () => {
       <Stack.Screen
         name="Logout"
         component={LogoutComponent}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="addCardapio"
+        component={addCardapio}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
