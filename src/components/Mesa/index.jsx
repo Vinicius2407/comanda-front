@@ -7,7 +7,7 @@ const Mesa = ({ id, estado, estaAtiva, onMesaPress }) => {
   return (
     <TouchableOpacity
       onPress={() => onMesaPress(id, estaAtiva)}
-      style={{ width: "30%", margin: 10, padding: 20, backgroundColor: cor }}
+      style={{ width: "27%", margin: 10, padding: 20, backgroundColor: cor }}
     >
       <Text style={{ textAlign: "center" }}>{id}</Text>
     </TouchableOpacity>

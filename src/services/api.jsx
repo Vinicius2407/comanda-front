@@ -20,7 +20,6 @@ const setAuthToken = async (token) => {
 
 api.interceptors.request.use(
   async (config) => {
-    console.log("token usado");
     await setAuthToken(); // Chame a função para definir o token antes de cada requisição
     return config;
   },

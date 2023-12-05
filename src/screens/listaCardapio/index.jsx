@@ -1,30 +1,25 @@
 import {
-  View,
   StyleSheet,
-  Image,
-  Input,
   Button,
   Text,
-  TextInput,
-  Linking,
   ScrollView,
   SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Card } from "react-native-paper";
-import getUser from "../../components/getUser";
+import getCardapio from "../../components/getCardapio";
 import Loading from "../../components/Loading";
 
 import { api } from "../../services/api";
 
-const Lista = ({ navigation }) => {
+const ListaCardapio = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     navigation.addListener("focus", async () => {
-      getUser(setData, setLoading, setError);
+      getCardapio(setData, setLoading, setError);
     });
   }, [navigation]);
 
@@ -32,9 +27,9 @@ const Lista = ({ navigation }) => {
     console.log(data);
   }, [data]);
 
-  const excluirUsuario = async (id) => {
+  const excluirCardapio = async (id) => {
     await api
-      .delete(`/usuarios/${id}`, {})
+      .delete(`/cardapio/${id}`, {})
       .then((res) => {
         console.log(res);
       })
@@ -44,7 +39,7 @@ const Lista = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>Lista de usuarios</Text>
+        <Text style={styles.title}>Lista de itens do cardapio</Text>
 
         {loading && <Loading />}
         {!loading && data?.length
@@ -57,17 +52,18 @@ const Lista = ({ navigation }) => {
               >
                 <Text>{data.id}</Text>
                 <Text>{data.nome}</Text>
-                <Text>{data.atribuicao}</Text>
+                <Text>{data.categoria}</Text>
+                <Text>{data.valor}</Text>
                 <Button
                   title="Update"
                   onPress={() =>
-                    navigation.navigate("UpdateScreen", { id: data.id })
+                    navigation.navigate("UpdateCardapio", { id: data.id })
                   }
                 />
 
                 <Button
                   title="Excluir"
-                  onPress={() => excluirUsuario(data.id)}
+                  onPress={() => excluirCardapio(data.id)}
                 />
               </Card>
             ))
@@ -76,7 +72,7 @@ const Lista = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-export default Lista;
+export default ListaCardapio;
 
 const styles = StyleSheet.create({
   container: {

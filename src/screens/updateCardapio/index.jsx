@@ -4,22 +4,20 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Body, Spacing } from "./styles";
-import { updateUser } from "../../functions/updateUser";
+import { updateCardapio } from "../../functions/updateCardapio";
 import { StyleSheet } from "react-native";
-import getUserById from "../../functions/getById";
+import getCardapioById from "../../functions/getCardapioById";
 import Modal from "./components/modal";
 
-const UpdateScreen = ({ route, navigation }) => {
+const UpdateCardapio = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const schema = yup.object({
     nome: yup.string().required("Campo obrigatorio"),
-    login: yup.string().required("Campo obrigatorio"),
-    senha: yup.string().nullable(),
-    atribuicao: yup.string().required("Campo obrigatorio"),
-    estaAtivo: yup.boolean().required("Campo obrigatorio"),
+    categoria: yup.number().required("Campo obrigatorio"),
+    valor: yup.string().required("Campo obrigatorio"),
   });
 
   const {
@@ -31,10 +29,6 @@ const UpdateScreen = ({ route, navigation }) => {
     resolver: yupResolver(schema),
   });
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   const id = route?.params?.id;
 
   useEffect(() => {
@@ -42,17 +36,16 @@ const UpdateScreen = ({ route, navigation }) => {
   }, [id]);
 
   const save = (data) => {
-    updateUser(id, data, setLoading, setError, setSuccess);
+    updateCardapio(id, data, setLoading, setError, setSuccess);
   };
 
   useEffect(() => {
     const screen = navigation.addListener("focus", async () => {
       if (id) {
-        const response = await getUserById(id);
+        const response = await getCardapioById(id);
         setValue("nome", response?.nome);
-        setValue("login", response?.login);
-        setValue("atribuicao", response?.atribuicao);
-        setValue("estaAtivo", response?.estaAtivo);
+        setValue("categoria", response?.categoria);
+        setValue("valor", response?.valor);
       }
     });
     return screen;
@@ -60,7 +53,7 @@ const UpdateScreen = ({ route, navigation }) => {
 
   const closeModal = () => {
     setSuccess(false);
-    navigation.navigate("Lista");
+    navigation.navigate("ListaCardapio");
   };
   return (
     <Body>
@@ -78,86 +71,52 @@ const UpdateScreen = ({ route, navigation }) => {
         )}
       />
       {errors?.nome && <Text>{errors?.name?.message}</Text>}
-      <Text>Login:</Text>
+      <Text>Valor:</Text>
       <Controller
-        name="login"
+        name="valor"
         control={control}
         render={({ field: { onChange, value } }) => (
           <Input
             onChangeText={(value) => onChange(value)}
-            value={value}
-            placeholder="Digite o nome"
+            value={value ? value.toString() : ""} // Convertendo para string se existir um valor
+            placeholder="Digite o valor"
             size="large"
           />
         )}
       />
-      <Text>Senha:</Text>
-      <Controller
-        name="senha"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            onChangeText={(value) => onChange(value)}
-            value={value}
-            placeholder="Digite a nova senha"
-            size="large"
-          />
-        )}
-      />
-      <Text>Atribuicao</Text>
+
+      <Text>Categoria</Text>
       <Layout>
         <Controller
-          name="atribuicao"
+          name="categoria"
           control={control}
           render={({ field: { onChange, value } }) => (
             <>
-              <Text>Garcom</Text>
-              <Radio
-                checked={value === "GARCOM"}
-                onChange={() => onChange("GARCOM")}
-              />
-              <Text>Cozinha</Text>
-              <Radio
-                checked={value === "COZINHA"}
-                onChange={() => onChange("COZINHA")}
-              />
-              {console.log(value)}
+              <Text>Prato</Text>
+              <Radio checked={value === "1"} onChange={() => onChange("1")} />
+              <Text>Bebida</Text>
+              <Radio checked={value === "2"} onChange={() => onChange("2")} />
+              <Text>Sobremesa</Text>
+              <Radio checked={value === "3"} onChange={() => onChange("3")} />
             </>
           )}
         />
       </Layout>
-      <Text>Status</Text>
-      <Layout>
-        <Controller
-          name="estaAtivo"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <>
-              <Text>Ativo</Text>
-              <Radio checked={value === true} onChange={() => onChange(true)} />
-              <Text>Desativado</Text>
-              <Radio
-                checked={value === false}
-                onChange={() => onChange(false)}
-              />
-            </>
-          )}
-        />
-      </Layout>
+
       <Spacing />
       <Button onPress={handleSubmit(save)}>Salvar</Button>
       {success && (
         <Modal
           open={success}
           close={() => closeModal()}
-          message="Usuario editado com sucesso"
+          message="Cardapio editado com sucesso"
         />
       )}
     </Body>
   );
 };
 
-export default UpdateScreen;
+export default UpdateCardapio;
 
 const styles = StyleSheet.create({
   container: {

@@ -11,6 +11,8 @@ import Comanda from "../screens/Comanda";
 import LogoutComponent from "../components/Logout";
 import Cardapio from "../screens/Cardapio";
 import addCardapio from "../screens/addCardapio";
+import UpdateCardapio from "../screens/updateCardapio";
+import ListaCardapio from "../screens/listaCardapio";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +38,17 @@ const AppStack = () => {
       <Stack.Screen
         name="Cardapio"
         component={Cardapio}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="ListaCardapio"
+        component={ListaCardapio}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="UpdateCardapio"
+        component={UpdateCardapio}
         options={{ headerShown: false }}
       />
 

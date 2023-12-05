@@ -84,7 +84,7 @@ export default function AddCardapio() {
           </View>
           <View style={styles.inputRadioButton}>
             <RadioButton
-              value="2"
+              value="3"
               status={categoria === "3" ? "checked" : "unchecked"}
               onPress={() => setCategoria("3")}
             />

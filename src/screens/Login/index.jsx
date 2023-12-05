@@ -38,6 +38,7 @@ const Login = ({ navigation }) => {
           if (result.status == 200) {
             const token = result.data.token;
             AsyncStorage.setItem("Token", token);
+            console.log(token);
             // Defina o token JWT nos cabeçalhos
             setAuthToken(token);
             if (result.data.atribuicao == "GARCOM") {

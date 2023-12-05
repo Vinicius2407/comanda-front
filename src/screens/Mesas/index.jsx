@@ -1,8 +1,15 @@
 // Mesas.js
 import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity, Text, Button, StyleSheet } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import NomeClienteModal from "./components/modal";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { api } from "../../services/api";
 import Mesa from "../../components/Mesa";
 
@@ -12,9 +19,12 @@ const Mesas = ({ id, estaAtiva }) => {
   const [selectedMesa, setSelectedMesa] = useState(null);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    fetchMesas();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Atualizar a lista de mesas sempre que a tela ganhar foco
+      fetchMesas();
+    }, [])
+  );
 
   const fetchMesas = () => {
     api
@@ -23,11 +33,15 @@ const Mesas = ({ id, estaAtiva }) => {
       .catch((error) => console.error("Erro ao buscar mesas:", error));
   };
 
-  const onMesaPress = (id, estaAtiva, idComanda) => {
-    console.log(id, estaAtiva, idComanda);
-    if (!estaAtiva) {
+  const onMesaPress = (id, estado, idComanda) => {
+    console.log(id, estado, idComanda);
+    if (estado == "OCUPADA") {
       setSelectedMesa(id);
-      navigation.navigate("Comanda", { idComanda });
+
+      navigation.navigate("Comanda", {
+        idComanda: idComanda,
+        idMesa: id,
+      });
     } else {
       setSelectedMesa(id);
       setModalVisible(true);
@@ -37,7 +51,10 @@ const Mesas = ({ id, estaAtiva }) => {
   const onComanda = async (idComanda) => {
     try {
       if (idComanda) {
-        navigation.navigate("Comanda", { idComanda: idComanda });
+        navigation.navigate("Comanda", {
+          idComanda: idComanda,
+          idMesa: selectedMesa,
+        });
       } else {
         console.error("ID de comanda inválido");
       }
@@ -56,31 +73,31 @@ const Mesas = ({ id, estaAtiva }) => {
           idComanda: idComanda,
         });
         const idComanda = response.data.idComanda;
-
-        console.log(idComanda);
+        const idMesa = selectedMesa;
 
         const updatedMesas = mesas.map((mesa) => {
           if (mesa.id === selectedMesa && mesa.estado === "LIVRE") {
             return {
               ...mesa,
               estado: "OCUPADA",
-              estaAtiva: false,
+              estaAtiva: true,
               idComanda: idComanda,
             };
           }
           return mesa;
         });
         setMesas(updatedMesas);
-        onComanda(idComanda);
+        onComanda(idComanda, idMesa);
         api
           .put(`/mesas/${selectedMesa}`, {
             estado: "OCUPADA",
-            estaAtiva: false,
+            estaAtiva: true,
             idComanda: idComanda,
           })
           .then((response) => {
             console.log("Mesa ocupada com sucesso");
           });
+        fetchMesas();
       } catch (error) {
         console.error("Erro ao criar a comanda:", error);
       }
@@ -101,30 +118,58 @@ const Mesas = ({ id, estaAtiva }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <TouchableOpacity style={styles.addButton} onPress={criarNovaMesa}>
-        <Text style={{ color: "white" }}>+ Nova Mesa</Text>
-      </TouchableOpacity>
-      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        {mesas.map((mesa) => (
-          <Mesa
-            key={mesa.id}
-            {...mesa}
-            onMesaPress={() =>
-              onMesaPress(mesa.id, mesa.estaAtiva, mesa.idComanda)
-            }
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <TouchableOpacity
+          style={[
+            styles.addButton,
+            { position: "absolute", top: 0, right: 20 },
+          ]}
+          onPress={criarNovaMesa}
+        >
+          <Text style={{ color: "white" }}>+ Nova Mesa</Text>
+        </TouchableOpacity>
+
+        {/* Conteúdo abaixo do botão Nova Mesa com padding de 40px */}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingTop: 80,
+          }}
+        >
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {mesas.map((mesa) => (
+              <Mesa
+                key={mesa.id}
+                {...mesa}
+                onMesaPress={() =>
+                  onMesaPress(mesa.id, mesa.estado, mesa.idComanda)
+                }
+              />
+            ))}
+          </View>
+          <NomeClienteModal
+            isVisible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            onConfirm={ocuparMesa}
           />
-        ))}
-      </View>
-      <NomeClienteModal
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onConfirm={ocuparMesa}
-      />
-    </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#0000",
+    paddingTop: 40,
+    paddingBottom: 60,
+    alignContent: "center",
+    alignSelf: "center",
+    width: "100%",
+  },
   addButton: {
     position: "absolute",
     top: 20,

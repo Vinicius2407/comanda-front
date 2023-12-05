@@ -18,12 +18,12 @@ export default function Home() {
     navigation.navigate("Logout");
   };
 
-  const handleNavCardapio = () => {
-    navigation.navigate("Cardapio");
-  };
-
   const handleNavMesas = () => {
     navigation.navigate("Mesas");
+  };
+
+  const handleNavListaCardapio = () => {
+    navigation.navigate("ListaCardapio");
   };
 
   const handleNavLista = () => {
@@ -33,16 +33,6 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bem vindo!</Text>
-
-      <Button
-        style={styles.button1}
-        title="Cardapio"
-        onPress={() => {
-          handleNavCardapio();
-        }}
-      >
-        Cardapio
-      </Button>
 
       <Button
         style={styles.button1}
@@ -61,7 +51,17 @@ export default function Home() {
           handleNavLista();
         }}
       >
-        Lista
+        Lista de Usuarios
+      </Button>
+
+      <Button
+        style={styles.button1}
+        title="ListaCardapio"
+        onPress={() => {
+          handleNavListaCardapio();
+        }}
+      >
+        Lista do Cardapio
       </Button>
 
       <Button
@@ -72,6 +72,15 @@ export default function Home() {
         }}
       >
         Lista
+      </Button>
+      <Button
+        style={styles.button1}
+        title="addCardapio"
+        onPress={() => {
+          handleNavAddCardapio();
+        }}
+      >
+        Add Cardapio
       </Button>
     </View>
   );
