@@ -18,7 +18,6 @@ const Cardapio = ({ navigation, route }) => {
   const [obs, setObs] = useState("");
   const [valorTotal, setValorTotal] = useState(0);
   const [itens, setItens] = useState([]);
-  const [observacoes, setObservacoes] = useState({});
   const { idPedido, idMesa } = route.params;
 
   const fetchData = async () => {
@@ -30,9 +29,6 @@ const Cardapio = ({ navigation, route }) => {
     }
   };
 
-  const acionarForm = () => {
-    navigation.navigate("UpdateCardapio");
-  };
   useFocusEffect(
     React.useCallback(() => {
       fetchData();
@@ -70,14 +66,14 @@ const Cardapio = ({ navigation, route }) => {
     setValorTotal(total);
   };
 
-  const handleObservacaoChange = (itemId, observacao) => {
-    setObservacoes((prevObservacoes) => ({
-      ...prevObservacoes,
-      [itemId]: observacao,
-    }));
+  const handleObservacoesChange = (id, text) => {
+    const newItens = itens.map((item) =>
+      item.id === id ? { ...item, observacoes: text } : item
+    );
+    setItens(newItens);
   };
 
-  const RenderItem = ({ item, observacao, onObservacaoChange }) => {
+  const RenderItem = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
         <View>
@@ -85,12 +81,11 @@ const Cardapio = ({ navigation, route }) => {
             item.nome
           } - R$ ${item.valor.toFixed(2)}`}</Text>
           <TextInput
-            onChangeText={onObservacaoChange}
-            value={observacao}
+            value={item.observacoes}
             placeholder="Observacao"
             style={styles.input}
+            onChangeText={(text) => handleObservacoesChange(item.id, text)}
             blurOnSubmit={false}
-            onSubmitEditing={() => {}}
           />
         </View>
         <View style={styles.quantityContainer}>
@@ -125,21 +120,8 @@ const Cardapio = ({ navigation, route }) => {
     data: groupedItens[categoria],
   }));
 
-  const adicionarObservacoesAosItens = useCallback(() => {
-    const novosItens = itens.map((item) => {
-      const observacao = observacoes[item.id];
-      return {
-        ...item,
-        observacoes: observacao || "",
-      };
-    });
-
-    setItens(novosItens);
-  }, []);
-
   const addPedido = async () => {
     try {
-      adicionarObservacoesAosItens();
       const itensParaEnviar = itens
         .filter((item) => item.quantidade > 0)
         .map((item) => {
@@ -147,11 +129,9 @@ const Cardapio = ({ navigation, route }) => {
           const itemData = {
             cardapioId: id,
             quantidade: quantidade,
+            observacoes: observacoes,
           };
 
-          if (observacoes) {
-            itemData.observacoes = observacoes;
-          }
           return itemData;
         });
       console.log(itensParaEnviar);
@@ -182,15 +162,7 @@ const Cardapio = ({ navigation, route }) => {
     <View style={styles.container}>
       <SectionList
         sections={sectionData}
-        renderItem={({ item }) => (
-          <RenderItem
-            item={item}
-            observacao={observacoes[item.id] || ""}
-            onObservacaoChange={(observacao) =>
-              handleObservacaoChange(item.id, observacao)
-            }
-          />
-        )}
+        renderItem={({ item }) => <RenderItem item={item} />}
         renderSectionHeader={renderSectionHeader}
         keyExtractor={(item) => item.id.toString()}
       />

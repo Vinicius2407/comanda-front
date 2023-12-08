@@ -53,15 +53,6 @@ const CardPedidos = ({
           Gerar PDF
         </Text>
       </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.button2}
-        onPress={() => onExcluirPedido(idPedido)}
-      >
-        <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-          Excluir Pedido
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
