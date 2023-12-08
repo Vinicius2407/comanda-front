@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Button,
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   Alert,
 } from "react-native";
 import CardPedidos from "./components/CardPedidos";
 import { api } from "../../services/api";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useUserContext } from "../../context/UserContext";
+import * as Print from "expo-print";
+import * as FileSystem from "expo-file-system";
 
 const Comanda = ({ navigation, route }) => {
   const [pedidos, setPedidos] = useState([]);
@@ -19,6 +21,7 @@ const Comanda = ({ navigation, route }) => {
   const { userId, setContextUserId } = useUserContext();
   const { idComanda, idMesa, selectedMesa } = route.params;
   const [nomeCliente, setNomeCliente] = useState("");
+  const [pdfUri, setPdfUri] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -108,6 +111,10 @@ const Comanda = ({ navigation, route }) => {
   };
 
   const fecharComanda = async () => {
+    const pdfContent = generatePdfContent(); // Implemente esta função
+    const pdfUri = await generatePdf(pdfContent);
+
+    setPdfUri(pdfUri);
     // Mostrar modal de confirmação
     Alert.alert(
       "Fechar Comanda",
@@ -125,6 +132,7 @@ const Comanda = ({ navigation, route }) => {
             try {
               const res = await api.get(`/comandas/checkout/${idComanda}`);
               navigation.navigate("Mesas");
+              viewPdf(pdfUri);
             } catch (error) {
               console.log(error);
             }
@@ -134,40 +142,156 @@ const Comanda = ({ navigation, route }) => {
     );
   };
 
+  const viewPdf = async (pdfUri) => {
+    try {
+      await Print.printAsync({ uri: pdfUri });
+    } catch (error) {
+      console.error("Erro ao visualizar o PDF:", error);
+    }
+  };
+
+  const generatePdf = async (content) => {
+    try {
+      const { uri } = await Print.printToFileAsync({ html: content });
+      return uri;
+    } catch (error) {
+      console.error("Erro ao gerar o PDF:", error);
+      return null;
+    }
+  };
+
+  const generatePdfContent = () => {
+    // Inclua o cabeçalho do HTML
+    let htmlContent = `
+      <html>
+        <body>
+          <h1>Comanda: ${idComanda}</h1>
+          <h2>Cliente: ${nomeCliente}</h2>
+    `;
+
+    // Itere sobre os pedidos e inclua os detalhes no HTML
+    pedidos.forEach((pedido) => {
+      // Adicione informações do pedido ao HTML
+      htmlContent += `
+        <div>
+          <ul>
+      `;
+
+      // Itere sobre os itens do pedido e inclua no HTML
+      pedido.itens.forEach((item) => {
+        htmlContent += `
+            <h2><li>${item.quantidade} x ${
+          item.cardapio.nome
+        } - R$ ${item.cardapio.valor.toFixed(2)}</li></h2>
+        `;
+      });
+
+      // Feche as tags do HTML para o pedido
+      htmlContent += `
+          </ul>
+        </div>
+      `;
+    });
+
+    // Inclua o valor total no HTML
+    htmlContent += `
+        <h1>Valor Total: R$ ${valorTotal.toFixed(2)}</h1>
+    `;
+
+    // Inclua o rodapé do HTML
+    htmlContent += `
+        </body>
+      </html>
+    `;
+
+    return htmlContent;
+  };
+
+  const gerarPdfPedido = async (pedido) => {
+    const pdfContent = generatePdfPedidoContent(pedido);
+    const pdfUri = await generatePdf(pdfContent);
+    viewPdf(pdfUri);
+  };
+
+  const generatePdfPedidoContent = (pedido) => {
+    let htmlContent = `
+      <html>
+        <body>
+          <h1>Detalhes do Pedido</h1>
+          <p>Pedido: ${pedido.idPedido}</p>
+    `;
+
+    if (pedido.itens && pedido.itens.length > 0) {
+      pedido.itens.forEach((item) => {
+        htmlContent += `
+          <div>
+            <h3>Nome: ${item.cardapio.nome}</h3>
+            <h3>Quantidade: ${item.quantidade}</h3>
+          </div>
+        `;
+      });
+    } else {
+      htmlContent += "<p>Não há itens neste pedido.</p>";
+    }
+
+    htmlContent += `
+        </body>
+      </html>
+    `;
+
+    return htmlContent;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={{ flex: 1, padding: 20 }}>
-          <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
+          <Text style={{ marginTop: 16, fontSize: 16, fontWeight: "bold" }}>
             Comanda: {idComanda}
           </Text>
-          <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
+          <Text
+            style={{
+              marginBottom: 20,
+              marginTop: 16,
+              fontSize: 16,
+              fontWeight: "bold",
+            }}
+          >
             Cliente: {nomeCliente}
           </Text>
-          <Text
-            style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}
-          ></Text>
-          <Text
-            style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}
-          ></Text>
+
           <View>
             {pedidos.map((pedido) => (
               <CardPedidos
                 key={pedido.idPedido}
                 itens={pedido.itens}
+                pedido={pedido}
                 idPedido={pedido.idPedido}
                 onEditar={() => editarPedido(pedido.idPedido)}
                 onExcluir={(idItem) => excluirItem(idItem)}
+                onGerarPdf={gerarPdfPedido}
               />
             ))}
           </View>
 
           <Text
-            style={{ marginTop: 20, fontSize: 18 }}
-          >{`Valor Total: R$ ${valorTotal.toFixed(2)}`}</Text>
+            style={{ marginTop: 20, fontSize: 18, fontWeight: "bold" }}
+          >{`Valor Total da Comanda: R$ ${valorTotal.toFixed(2)}`}</Text>
 
-          <Button title="Adicionar Pedido" onPress={() => criarPedido()} />
-          <Button title="Fechar Comanda" onPress={() => fecharComanda()} />
+          <TouchableOpacity style={styles.button} onPress={() => criarPedido()}>
+            <Text style={{ color: "white", fontSize: 14, fontWeight: "bold" }}>
+              Criar Pedido
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => fecharComanda()}
+          >
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+              Fechar Comanda
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -183,6 +307,14 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignSelf: "center",
     width: "100%",
+  },
+  button: {
+    alignItems: "center",
+    backgroundColor: "#008080",
+    marginBottom: 20,
+    padding: 20,
+    borderRadius: 8,
+    borderWidth: 0,
   },
   containerHeader: {
     marginTop: "14%",

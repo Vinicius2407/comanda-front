@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { api } from "../../services/api";
 import { TextInput } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Cardapio = ({ navigation, route }) => {
   const [categorias, setCategorias] = useState({});
@@ -19,18 +20,20 @@ const Cardapio = ({ navigation, route }) => {
   const [observacoes, setObservacoes] = useState({});
   const { idPedido, idMesa } = route.params;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("/cardapio");
-        setItens(response.data);
-      } catch (error) {
-        console.error("Erro ao obter itens do cardápio:", error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const response = await api.get("/cardapio");
+      setItens(response.data);
+    } catch (error) {
+      console.error("Erro ao obter itens do cardápio:", error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const handleIncrement = useCallback(
     (id) => {
@@ -74,16 +77,17 @@ const Cardapio = ({ navigation, route }) => {
     return (
       <View style={styles.itemContainer}>
         <View>
-          <Text>{`${item.nome} - R$ ${item.valor.toFixed(2)}`}</Text>
+          <Text style={{ marginTop: 16, fontSize: 16, fontWeight: "bold" }}>{`${
+            item.nome
+          } - R$ ${item.valor.toFixed(2)}`}</Text>
           <TextInput
             onChangeText={onObservacaoChange}
             value={observacao}
             placeholder="Observacao"
             style={styles.input}
+            blurOnSubmit={false}
+            onSubmitEditing={() => {}}
           />
-          <Text
-            style={styles.categoryText}
-          >{`Categoria: ${item.categoria}`}</Text>
         </View>
         <View style={styles.quantityContainer}>
           <TouchableOpacity onPress={() => handleDecrement(item.id)}>
@@ -117,24 +121,21 @@ const Cardapio = ({ navigation, route }) => {
     data: groupedItens[categoria],
   }));
 
-  const adicionarObservacoesAosItens = () => {
+  const adicionarObservacoesAosItens = useCallback(() => {
     const novosItens = itens.map((item) => {
       const observacao = observacoes[item.id];
       return {
         ...item,
-        observacoes: observacao || "", // Adiciona a observação ou uma string vazia se não houver observação
+        observacoes: observacao || "",
       };
     });
 
-    // Atualiza o estado dos itens com as observações
     setItens(novosItens);
-  };
+  }, []);
 
   const addPedido = async () => {
     try {
       adicionarObservacoesAosItens();
-
-      // Filtra os itens com quantidade maior que zero
       const itensParaEnviar = itens
         .filter((item) => item.quantidade > 0)
         .map((item) => {
@@ -143,19 +144,18 @@ const Cardapio = ({ navigation, route }) => {
             cardapioId: id,
             quantidade: quantidade,
           };
-          // Adiciona o campo "observacoes" apenas se houver uma observação para o item
+
           if (observacoes) {
             itemData.observacoes = observacoes;
           }
           return itemData;
         });
-
+      console.log(itensParaEnviar);
       await api.post(`/pedidos/pedido/${idPedido}`, itensParaEnviar);
       onComanda();
     } catch (error) {
       console.error("Erro ao adicionar pedido:", error);
 
-      // Verifique se a resposta HTTP está presente no objeto de erro
       if (error.response) {
         console.error("Detalhes da resposta HTTP:", error.response.data);
         console.error("Status HTTP:", error.response.status);
@@ -175,7 +175,7 @@ const Cardapio = ({ navigation, route }) => {
     }
   };
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={styles.container}>
       <SectionList
         sections={sectionData}
         renderItem={({ item }) => (
@@ -199,11 +199,19 @@ const Cardapio = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#fff",
+  },
   itemContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
   },
   quantityContainer: {
     flexDirection: "row",
@@ -212,16 +220,35 @@ const styles = StyleSheet.create({
   quantityButton: {
     fontSize: 20,
     marginHorizontal: 8,
+    color: "#008080",
   },
   sectionHeader: {
-    backgroundColor: "blue",
+    backgroundColor: "#008080",
     padding: 10,
     marginBottom: 10,
+    borderRadius: 8,
   },
   sectionHeaderText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  input: {
+    marginTop: 5,
+    marginBottom: 10,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+  },
+  totalContainer: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  totalText: {
+    fontSize: 18,
   },
 });
 

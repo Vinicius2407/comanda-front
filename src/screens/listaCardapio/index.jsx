@@ -1,9 +1,10 @@
 import {
   StyleSheet,
-  Button,
+  View,
   Text,
   ScrollView,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Card } from "react-native-paper";
@@ -37,33 +38,40 @@ const ListaCardapio = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>Lista de itens do cardapio</Text>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Text style={styles.title}>Lista de itens do cardápio</Text>
 
         {loading && <Loading />}
         {!loading && data?.length
-          ? data.map((data, i) => (
-              <Card
-                style={{
-                  marginBottom: 5,
-                }}
-                key={i}
-              >
-                <Text>{data.id}</Text>
-                <Text>{data.nome}</Text>
-                <Text>{data.categoria}</Text>
-                <Text>{data.valor}</Text>
-                <Button
-                  title="Update"
-                  onPress={() =>
-                    navigation.navigate("UpdateCardapio", { id: data.id })
-                  }
-                />
+          ? data.map((item, i) => (
+              <Card style={styles.card} key={i}>
+                <View style={styles.userInfo}>
+                  <Text style={styles.userInfoText}>Nome: {item.nome}</Text>
+                  <Text style={styles.userInfoText}>
+                    Categoria: {item.categoria}
+                  </Text>
+                  <Text style={styles.userInfoText}>Valor: {item.valor}</Text>
+                </View>
 
-                <Button
-                  title="Excluir"
-                  onPress={() => excluirCardapio(data.id)}
-                />
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate("UpdateCardapio", { id: item.id })
+                    }
+                  >
+                    <Text style={styles.buttonText}>Editar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.button, styles.deleteButton]}
+                    onPress={() => excluirCardapio(item.id)}
+                  >
+                    <Text style={[styles.buttonText, styles.deleteButtonText]}>
+                      Excluir
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </Card>
             ))
           : null}
@@ -71,60 +79,58 @@ const ListaCardapio = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-export default ListaCardapio;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0000",
-    paddingTop: 40,
-    paddingBottom: 60,
-    alignContent: "center",
-    alignSelf: "center",
-    width: "70%",
+    backgroundColor: "#f0f0f0",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
   },
-  containerHeader: {
-    marginTop: "14%",
-    marginBottom: "8%",
-    paddingStart: "5%",
-  },
-  message: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  containerForm: {
-    backgroundColor: "#FFF",
-    flex: 1,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingStart: "5%",
-    paddingEnd: "5%",
+  scrollView: {
+    flexGrow: 1,
   },
   title: {
-    fontSize: 30,
-    marginTop: 28,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
-  input: {
-    borderBottomWidth: 1,
-    height: 40,
-    marginBottom: 12,
+  card: {
+    marginVertical: 10,
+    padding: 15,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    elevation: 3,
+  },
+  userInfo: {
+    marginBottom: 10,
+  },
+  userInfoText: {
     fontSize: 16,
+    marginBottom: 5,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
     backgroundColor: "#38a69d",
-    width: "100%",
     borderRadius: 4,
     paddingVertical: 8,
-    marginTop: 14,
-    justifyContent: "center",
+    paddingHorizontal: 10,
     alignItems: "center",
+    flex: 1,
   },
-  buttonRegister: {
-    marginTop: 14,
-    alignSelf: "center",
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
-  registerText: {
-    color: "#a1a1a1",
+  deleteButton: {
+    backgroundColor: "#e74c3c",
+    marginLeft: 10,
+  },
+  deleteButtonText: {
+    color: "#fff",
   },
 });
+export default ListaCardapio;

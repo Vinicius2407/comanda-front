@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, Text } from "react-native";
 
 const Mesa = ({ id, estado, estaAtiva, onMesaPress }) => {
-  const cor = estaAtiva ? (estado === "LIVRE" ? "green" : "red") : "gray";
+  const cor = estaAtiva ? (estado === "LIVRE" ? "green" : "#e74c3c") : "gray";
 
   return (
     <TouchableOpacity

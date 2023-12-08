@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 
-const CardPedidos = ({ idPedido, itens, onEditar, onExcluir }) => {
-  // Função para calcular o valor total do pedido
+const CardPedidos = ({ idPedido, itens, onExcluir, onGerarPdf, pedido }) => {
   const calcularValorTotal = () => {
     return itens.reduce(
       (total, item) => total + item.cardapio.valor * item.quantidade,
@@ -16,19 +15,21 @@ const CardPedidos = ({ idPedido, itens, onEditar, onExcluir }) => {
 
       {itens.map((item, index) => (
         <View key={index} style={styles.itemContainer}>
-          <Text>{`Nome: ${item.cardapio.nome}`}</Text>
-          <Text>{`Quantidade: ${item.quantidade}`}</Text>
-          <Text>{`Valor: R$ ${item.cardapio.valor.toFixed(2)}`}</Text>
+          <View style={styles.itemInfoContainer}>
+            <Text>{`Nome: ${item.cardapio.nome}`}</Text>
+            <Text>{`Quantidade: ${item.quantidade}`}</Text>
+            <Text>{`Valor: R$ ${item.cardapio.valor.toFixed(2)}`}</Text>
+            {item.observacoes && (
+              <Text>{`Observações: ${item.observacoes}`}</Text>
+            )}
+          </View>
+
           <TouchableOpacity
             style={styles.excluirButton}
             onPress={() => onExcluir(item.id)}
           >
             <Text style={styles.excluirButtonText}>X</Text>
           </TouchableOpacity>
-
-          {item.observacoes && (
-            <Text>{`Observações: ${item.observacoes}`}</Text>
-          )}
         </View>
       ))}
       <View style={styles.totalContainer}>
@@ -37,10 +38,14 @@ const CardPedidos = ({ idPedido, itens, onEditar, onExcluir }) => {
           2
         )}`}</Text>
       </View>
-
-      <Button title="excluir" onPress={() => onExcluirPedido(idPedido)}>
-        Excluir
-      </Button>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => onGerarPdf(pedido)}
+      >
+        <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+          Gerar PDF
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -52,6 +57,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
+  },
+  button: {
+    alignItems: "center",
+    backgroundColor: "#008080",
+    marginBottom: 20,
+    padding: 20,
+    borderRadius: 8,
+    borderWidth: 0,
+    marginTop: 16,
   },
   cardTitle: {
     fontSize: 18,
@@ -88,6 +102,28 @@ const styles = StyleSheet.create({
   },
   totalValue: {
     fontSize: 16,
+  },
+  itemContainer: {
+    flexDirection: "row", // Alteração: agora é uma linha
+    justifyContent: "space-between", // Alteração: distribui espaço entre os elementos
+    alignItems: "center", // Alteração: centraliza verticalmente
+    marginBottom: 8,
+  },
+  itemInfoContainer: {
+    flex: 1, // Alteração: ocupa o espaço disponível
+  },
+  excluirButton: {
+    backgroundColor: "red",
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  excluirButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
