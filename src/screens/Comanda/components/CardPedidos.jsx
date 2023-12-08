@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 
-const CardPedidos = ({ itens }) => {
+const CardPedidos = ({ idPedido, itens, onEditar, onExcluir }) => {
   // Função para calcular o valor total do pedido
   const calcularValorTotal = () => {
     return itens.reduce(
@@ -13,11 +13,19 @@ const CardPedidos = ({ itens }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>Detalhes do Pedido</Text>
+
       {itens.map((item, index) => (
         <View key={index} style={styles.itemContainer}>
           <Text>{`Nome: ${item.cardapio.nome}`}</Text>
           <Text>{`Quantidade: ${item.quantidade}`}</Text>
           <Text>{`Valor: R$ ${item.cardapio.valor.toFixed(2)}`}</Text>
+          <TouchableOpacity
+            style={styles.excluirButton}
+            onPress={() => onExcluir(item.id)}
+          >
+            <Text style={styles.excluirButtonText}>X</Text>
+          </TouchableOpacity>
+
           {item.observacoes && (
             <Text>{`Observações: ${item.observacoes}`}</Text>
           )}
@@ -29,6 +37,10 @@ const CardPedidos = ({ itens }) => {
           2
         )}`}</Text>
       </View>
+
+      <Button title="excluir" onPress={() => onExcluirPedido(idPedido)}>
+        Excluir
+      </Button>
     </View>
   );
 };
@@ -48,6 +60,19 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     marginBottom: 8,
+  },
+  excluirButton: {
+    backgroundColor: "red",
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  excluirButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   totalContainer: {
     marginTop: 16,

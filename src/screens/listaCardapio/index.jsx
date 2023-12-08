@@ -28,12 +28,11 @@ const ListaCardapio = ({ navigation }) => {
   }, [data]);
 
   const excluirCardapio = async (id) => {
-    await api
-      .delete(`/cardapio/${id}`, {})
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => console.log(error));
+    try {
+      await api.delete(`/cardapio/${id}`, {});
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

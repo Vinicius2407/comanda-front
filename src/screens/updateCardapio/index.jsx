@@ -95,9 +95,9 @@ const UpdateCardapio = ({ route, navigation }) => {
               <Text>Prato</Text>
               <Radio checked={value === "1"} onChange={() => onChange("1")} />
               <Text>Bebida</Text>
-              <Radio checked={value === "2"} onChange={() => onChange("2")} />
+              <Radio checked={value === "0"} onChange={() => onChange("0")} />
               <Text>Sobremesa</Text>
-              <Radio checked={value === "3"} onChange={() => onChange("3")} />
+              <Radio checked={value === "2"} onChange={() => onChange("2")} />
             </>
           )}
         />

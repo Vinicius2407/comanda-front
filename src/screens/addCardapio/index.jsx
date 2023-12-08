@@ -36,7 +36,7 @@ export default function AddCardapio() {
       })
       .then((res) => {
         console.log(res);
-        navigation.navigate("Cardapio");
+        navigation.navigate("ListaCardapio");
       })
       .catch((error) => console.log(error.response.data));
   };
@@ -76,17 +76,17 @@ export default function AddCardapio() {
           </View>
           <View style={styles.inputRadioButton}>
             <RadioButton
-              value="2"
-              status={categoria === "2" ? "checked" : "unchecked"}
-              onPress={() => setCategoria("2")}
+              value="0"
+              status={categoria === "0" ? "checked" : "unchecked"}
+              onPress={() => setCategoria("0")}
             />
             <Text>BEBIDA</Text>
           </View>
           <View style={styles.inputRadioButton}>
             <RadioButton
-              value="3"
-              status={categoria === "3" ? "checked" : "unchecked"}
-              onPress={() => setCategoria("3")}
+              value="2"
+              status={categoria === "2" ? "checked" : "unchecked"}
+              onPress={() => setCategoria("2")}
             />
             <Text>SOBREMESA</Text>
           </View>

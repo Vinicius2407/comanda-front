@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -30,58 +31,63 @@ export default function Home() {
     navigation.navigate("Lista");
   };
 
+  const handleNavAddCardapio = () => {
+    navigation.navigate("addCardapio");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bem vindo!</Text>
 
-      <Button
-        style={styles.button1}
+      <TouchableOpacity
+        style={styles.button}
         title="Mesas"
         onPress={() => {
           handleNavMesas();
         }}
       >
-        Mesas
-      </Button>
+        <Text style={styles.excluirButtonText}>Mesas</Text>
+      </TouchableOpacity>
 
-      <Button
-        style={styles.button1}
+      <TouchableOpacity
+        style={styles.button}
         title="Lista"
         onPress={() => {
           handleNavLista();
         }}
       >
-        Lista de Usuarios
-      </Button>
+        <Text style={styles.excluirButtonText}>Lista de usuarios</Text>
+      </TouchableOpacity>
 
-      <Button
-        style={styles.button1}
+      <TouchableOpacity
+        style={styles.button}
         title="ListaCardapio"
         onPress={() => {
           handleNavListaCardapio();
         }}
       >
-        Lista do Cardapio
-      </Button>
+        <Text style={styles.excluirButtonText}>Lista do Cardapio</Text>
+      </TouchableOpacity>
 
-      <Button
-        style={styles.button1}
-        title="Logout"
-        onPress={() => {
-          handleLogoutPress();
-        }}
-      >
-        Lista
-      </Button>
-      <Button
-        style={styles.button1}
+      <TouchableOpacity
+        style={styles.button}
         title="addCardapio"
         onPress={() => {
           handleNavAddCardapio();
         }}
       >
-        Add Cardapio
-      </Button>
+        <Text style={styles.excluirButtonText}>Add Cardapio</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        title="Logout"
+        onPress={() => {
+          handleLogoutPress();
+        }}
+      >
+        <Text style={styles.excluirButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -103,6 +109,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
   },
+  excluirButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "regular",
+  },
   containerForm: {
     backgroundColor: "#FFF",
     flex: 1,
@@ -113,7 +124,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    marginTop: 28,
+    marginTop: 10,
+    marginBottom: 40,
   },
   input: {
     borderBottomWidth: 1,
@@ -122,13 +134,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#38a69d",
-    width: "100%",
-    borderRadius: 4,
-    paddingVertical: 8,
-    marginTop: 14,
-    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#008080",
+    marginBottom: 20,
+    padding: 20,
+    borderRadius: 8,
+    borderWidth: 0,
   },
   buttonRegister: {
     marginTop: 14,

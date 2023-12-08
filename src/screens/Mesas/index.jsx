@@ -17,6 +17,7 @@ const Mesas = ({ id, estaAtiva }) => {
   const [mesas, setMesas] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMesa, setSelectedMesa] = useState(null);
+  const [isDesativarVisible, setIsDesativarVisible] = useState(false); // Adicionado estado
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -35,19 +36,50 @@ const Mesas = ({ id, estaAtiva }) => {
 
   const onMesaPress = (id, estado, idComanda) => {
     console.log(id, estado, idComanda);
-    if (estado == "OCUPADA") {
-      setSelectedMesa(id);
+    console.log(isDesativarVisible);
+    setSelectedMesa(id);
 
+    if (estado === "OCUPADA") {
       navigation.navigate("Comanda", {
         idComanda: idComanda,
         idMesa: id,
       });
     } else {
-      setSelectedMesa(id);
+      // Defina isDesativarVisible com base no estado da mesa
+      setIsDesativarVisible(true);
       setModalVisible(true);
     }
   };
 
+  const desativarMesa = async () => {
+    if (selectedMesa) {
+      try {
+        // Atualize a propriedade estaAtiva para false
+        const updatedMesas = mesas.map((mesa) => {
+          if (mesa.id === selectedMesa) {
+            return {
+              ...mesa,
+              estaAtiva: false,
+            };
+          }
+          return mesa;
+        });
+        setMesas(updatedMesas);
+
+        // Chame a API para atualizar a propriedade estaAtiva
+        await api.put(`/mesas/${selectedMesa}`, {
+          estaAtiva: false,
+        });
+
+        console.log("Mesa desativada com sucesso");
+      } catch (error) {
+        console.error("Erro ao desativar a mesa:", error);
+      }
+    }
+
+    setModalVisible(false);
+    setSelectedMesa(null);
+  };
   const onComanda = async (idComanda) => {
     try {
       if (idComanda) {
@@ -104,6 +136,7 @@ const Mesas = ({ id, estaAtiva }) => {
     }
     setModalVisible(false);
     setSelectedMesa(null);
+    setIsDesativarVisible(false);
   };
 
   const criarNovaMesa = async () => {
@@ -117,9 +150,39 @@ const Mesas = ({ id, estaAtiva }) => {
     }
   };
 
+  const ativarMesa = async () => {
+    if (selectedMesa) {
+      try {
+        // Atualize a propriedade estaAtiva para true localmente
+        const updatedMesas = mesas.map((mesa) => {
+          if (mesa.id === selectedMesa) {
+            return {
+              ...mesa,
+              estaAtiva: true,
+            };
+          }
+          return mesa;
+        });
+        setMesas(updatedMesas);
+
+        // Chame a API para atualizar a propriedade estaAtiva
+        await api.put(`/mesas/${selectedMesa}`, {
+          estaAtiva: true,
+        });
+
+        console.log("Mesa ativada com sucesso");
+      } catch (error) {
+        console.error("Erro ao ativar a mesa:", error);
+      }
+    }
+
+    setModalVisible(false);
+    setSelectedMesa(null);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        {/* Botão para criar nova mesa */}
         <TouchableOpacity
           style={[
             styles.addButton,
@@ -154,6 +217,12 @@ const Mesas = ({ id, estaAtiva }) => {
             isVisible={modalVisible}
             onClose={() => setModalVisible(false)}
             onConfirm={ocuparMesa}
+            desativarMesa={desativarMesa}
+            mesaAtiva={
+              selectedMesa && mesas.find((m) => m.id === selectedMesa).estaAtiva
+            }
+            isDesativarVisible={isDesativarVisible}
+            ativarMesa={ativarMesa} // Passa a função ativarMesa para a Modal
           />
         </View>
       </ScrollView>

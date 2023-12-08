@@ -82,6 +82,31 @@ const Comanda = ({ navigation, route }) => {
     }
   };
 
+  const excluirItem = async (idItem) => {
+    try {
+      await api.delete(`/pedidos/deletar/item/${idItem}`);
+
+      // Após excluir o item, atualizar a lista de pedidos
+      const response = await api.get(`/pedidos/comanda/${idComanda}`);
+      setPedidos(response.data);
+
+      // Atualizar o valor total após excluir o item
+      const total = response.data.reduce(
+        (acc, pedido) =>
+          acc +
+          pedido.itens.reduce(
+            (accItem, item) =>
+              accItem + (item.quantidade || 0) * item.cardapio.valor,
+            0
+          ),
+        0
+      );
+      setValorTotal(total);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fecharComanda = async () => {
     // Mostrar modal de confirmação
     Alert.alert(
@@ -99,7 +124,6 @@ const Comanda = ({ navigation, route }) => {
           onPress: async () => {
             try {
               const res = await api.get(`/comandas/checkout/${idComanda}`);
-
               navigation.navigate("Mesas");
             } catch (error) {
               console.log(error);
@@ -128,7 +152,13 @@ const Comanda = ({ navigation, route }) => {
           ></Text>
           <View>
             {pedidos.map((pedido) => (
-              <CardPedidos key={pedido.idPedido} itens={pedido.itens} />
+              <CardPedidos
+                key={pedido.idPedido}
+                itens={pedido.itens}
+                idPedido={pedido.idPedido}
+                onEditar={() => editarPedido(pedido.idPedido)}
+                onExcluir={(idItem) => excluirItem(idItem)}
+              />
             ))}
           </View>
 
