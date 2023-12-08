@@ -9,6 +9,7 @@ import {
   SectionList,
 } from "react-native";
 import { api } from "../../services/api";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { TextInput } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -29,6 +30,9 @@ const Cardapio = ({ navigation, route }) => {
     }
   };
 
+  const acionarForm = () => {
+    navigation.navigate("UpdateCardapio");
+  };
   useFocusEffect(
     React.useCallback(() => {
       fetchData();

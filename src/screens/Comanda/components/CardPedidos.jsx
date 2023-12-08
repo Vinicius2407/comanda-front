@@ -1,7 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 
-const CardPedidos = ({ idPedido, itens, onExcluir, onGerarPdf, pedido }) => {
+const CardPedidos = ({
+  idPedido,
+  itens,
+  onExcluir,
+  onGerarPdf,
+  pedido,
+  onExcluirPedido,
+}) => {
   const calcularValorTotal = () => {
     return itens.reduce(
       (total, item) => total + item.cardapio.valor * item.quantidade,
@@ -46,6 +53,15 @@ const CardPedidos = ({ idPedido, itens, onExcluir, onGerarPdf, pedido }) => {
           Gerar PDF
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button2}
+        onPress={() => onExcluirPedido(idPedido)}
+      >
+        <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+          Excluir Pedido
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -61,6 +77,15 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     backgroundColor: "#008080",
+    marginBottom: 20,
+    padding: 20,
+    borderRadius: 8,
+    borderWidth: 0,
+    marginTop: 16,
+  },
+  button2: {
+    alignItems: "center",
+    backgroundColor: "#e74c3c",
     marginBottom: 20,
     padding: 20,
     borderRadius: 8,

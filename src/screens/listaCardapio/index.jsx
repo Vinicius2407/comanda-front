@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { Card } from "react-native-paper";
 import getCardapio from "../../components/getCardapio";
 import Loading from "../../components/Loading";
-
+import Icon from "react-native-vector-icons/FontAwesome";
 import { api } from "../../services/api";
 
 const ListaCardapio = ({ navigation }) => {
@@ -18,6 +18,9 @@ const ListaCardapio = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const acionarForm = () => {
+    navigation.navigate("addCardapio");
+  };
   useEffect(() => {
     navigation.addListener("focus", async () => {
       getCardapio(setData, setLoading, setError);
@@ -76,6 +79,11 @@ const ListaCardapio = ({ navigation }) => {
             ))
           : null}
       </ScrollView>
+      <View style={styles.containerfab}>
+        <TouchableOpacity style={styles.fab} onPress={() => acionarForm()}>
+          <Icon name="plus" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -131,6 +139,24 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: "#fff",
+  },
+  containerfab: {
+    position: "absolute",
+    bottom: 16,
+    right: 16,
+  },
+  fab: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#007BFF", // Customize the background color
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4, // Android shadow
+    shadowColor: "#000", // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
 });
 export default ListaCardapio;

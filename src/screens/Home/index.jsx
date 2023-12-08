@@ -15,7 +15,6 @@ export default function Home() {
   const navigation = useNavigation();
 
   const handleLogoutPress = () => {
-    // Navegue para a tela de logout
     navigation.navigate("Logout");
   };
 
@@ -29,10 +28,6 @@ export default function Home() {
 
   const handleNavLista = () => {
     navigation.navigate("Lista");
-  };
-
-  const handleNavAddCardapio = () => {
-    navigation.navigate("addCardapio");
   };
 
   return (
@@ -71,22 +66,12 @@ export default function Home() {
 
       <TouchableOpacity
         style={styles.button}
-        title="addCardapio"
-        onPress={() => {
-          handleNavAddCardapio();
-        }}
-      >
-        <Text style={styles.excluirButtonText}>Add Cardapio</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.button}
         title="Logout"
         onPress={() => {
           handleLogoutPress();
         }}
       >
-        <Text style={styles.excluirButtonText}>Logout</Text>
+        <Text style={styles.excluirButtonText}>Sair</Text>
       </TouchableOpacity>
     </View>
   );

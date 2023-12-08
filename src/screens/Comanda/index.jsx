@@ -110,6 +110,17 @@ const Comanda = ({ navigation, route }) => {
     }
   };
 
+  const excluirPedido = async (idPedido) => {
+    try {
+      await api.delete(`/pedidos/${idPedido}`);
+      // Após excluir o item, atualizar a lista de pedidos
+      const response = await api.delete(`/pedidos/comanda/${idComanda}`);
+      setPedidos(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fecharComanda = async () => {
     const pdfContent = generatePdfContent(); // Implemente esta função
     const pdfUri = await generatePdf(pdfContent);
@@ -270,6 +281,7 @@ const Comanda = ({ navigation, route }) => {
                 onEditar={() => editarPedido(pedido.idPedido)}
                 onExcluir={(idItem) => excluirItem(idItem)}
                 onGerarPdf={gerarPdfPedido}
+                onExcluirPedido={() => excluirPedido(pedido.idPedido)}
               />
             ))}
           </View>
